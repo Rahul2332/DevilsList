@@ -1,6 +1,12 @@
-html, body{
-    overflow-y: hidden !important;
+@font-face {
+    font-family: devils_font;
+    src: url(../fonts/Devil.ttf);
 }
+
+html * {
+    font-family: kanit;
+}
+
 
 .fitHeight {
     height: fit-content !important;
@@ -43,7 +49,7 @@ html, body{
 }
 
 .background-darkBlue {
-    background-color: rgb(36, 53, 194);
+    background-color: rgb(36, 53, 194) !important;
 }
 
 .background-chocolate {
@@ -59,7 +65,11 @@ html, body{
 }
 
 .sidebar-background {
-    background-color: rgb(18, 24, 39);
+    background-color: rgb(18, 24, 39) !important;
+}
+
+.sidebar-color {
+    color: rgb(18, 24, 39) !important;
 }
 
 .background-whatsappScreen {
@@ -83,14 +93,14 @@ html, body{
     font-weight: bold !important;
 }
 
-a :hover,
+/* a:hover,
 a:active,
 a:focus,
 a:visited {
     background-color: rgb(36, 42, 56) !important;
     border-radius: 15px !important;
     font-weight: bold !important;
-}
+} */
 
 .highlight-karo {
     background-color: rgb(36, 42, 56) !important;
@@ -113,4 +123,95 @@ a:visited {
 
 .background-paper {
     background-color: rgb(250, 250, 252);
+}
+
+/* ::-webkit-scrollbar {
+    display: none;
+} */
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 20px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+color-green-spent {
+    color: rgb(37, 186, 168) !important;
+}
+
+.banner {
+    background: rgb(17 22 48);
+    border-radius: 17px 17px 0px 0px;
+    color: white;
+}
+
+.background-light-purple {
+    background-color: rgb(238, 240, 255);
+}
+
+.button-purple {
+    background-color: #21005f !important;
+}
+
+.color-credit {
+    color: #82d616;
+}
+
+.color-debit {
+    color: #ea0606;
+}
+
+.background-primary {
+    background-color: rgb(64, 80, 181) !important;
+}
+
+.background-secondary{
+    background-color: #f50057 !important;
+}
+
+.background-purplepink {
+    background-color: rgb(80, 72, 228) !important;
+}
+
+.left-chat {
+    border-radius: 0px 20px 20px 20px;
+}
+
+.right-chat {
+    border-radius: 20px 0px 20px 20px;
+}
+
+.background-maroon {
+    background-color: rgb(79, 65, 109) !important;
+}
+
+.background-light {
+    background-color: rgb(245, 247, 251) !important;
+}
+
+.background-chat-request{
+    background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+}
+
+.background-accept{
+    background: rgb(37, 186, 168) !important;
+}
+
+.background-deny{
+    background: rgb(200, 51, 51) !important;
 }
