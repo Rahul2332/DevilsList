@@ -1,3 +1,7 @@
+html, body{
+    overflow-y: hidden !important;
+}
+
 .fitHeight {
     height: fit-content !important;
 }
@@ -16,6 +20,10 @@
 
 .rounded25 {
     border-radius: 25px !important;
+}
+
+.rounded15 {
+    border-radius: 15px !important;
 }
 
 .employee-form-bg {
@@ -51,7 +59,7 @@
 }
 
 .sidebar-background {
-    background-color: rgb(26, 27, 47);
+    background-color: rgb(18, 24, 39);
 }
 
 .background-whatsappScreen {
@@ -66,6 +74,43 @@
     font-family: 'Uchen';
 }
 
-.background-selected {
-    background-color: rgb(232, 232, 232) !important;
+.background-selected:hover,
+.background-selected:focus,
+.background-selected:active,
+.background-selected:visited {
+    background-color: rgb(36, 42, 56) !important;
+    border-radius: 15px !important;
+    font-weight: bold !important;
+}
+
+a :hover,
+a:active,
+a:focus,
+a:visited {
+    background-color: rgb(36, 42, 56) !important;
+    border-radius: 15px !important;
+    font-weight: bold !important;
+}
+
+.highlight-karo {
+    background-color: rgb(36, 42, 56) !important;
+    border-radius: 15px !important;
+    font-weight: bold !important;
+}
+
+.green-karo {
+    color: rgb(18, 185, 129) !important;
+}
+
+
+.menu-item-color {
+    color: rgb(209, 213, 219);
+}
+
+.menu-icon-color {
+    color: rgb(156, 163, 175);
+}
+
+.background-paper {
+    background-color: rgb(250, 250, 252);
 }
