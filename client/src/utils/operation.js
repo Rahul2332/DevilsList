@@ -1,37 +1,18 @@
 import { tezos } from "./tezos";
-import { wallet } from "./wallet";
-import { TezosToolkit, MichelsonMap } from "@taquito/taquito";
-import axios from "axios"
 
 export const verifyInvestor = async(
-    amountToAccredition,
-    email,
-    howAccredited,
-    linkedIn,
-    name,
-    number,
-    percentageNetworth,
-    photoCID,
-    resumeCID,
+    investorDetailsCID,
     walletID
 ) => {
     try {
         const contract = await tezos.wallet.at(
             //Contract Address
-            "KT1DuHfMszQvvYaBVcmVxqZFZ1uVJpzC72u4"
+            "KT1NVPnVfJGAfJETT7AJdLSgUHvtckAX9r28"
         );
 
         const op = await contract.methods
             .verifyInvestor(
-                amountToAccredition,
-                email,
-                howAccredited,
-                linkedIn,
-                name,
-                number,
-                percentageNetworth,
-                photoCID,
-                resumeCID,
+                investorDetailsCID,
                 walletID
             )
             .send({
@@ -45,21 +26,68 @@ export const verifyInvestor = async(
     }
 };
 
-export const getStorage = async() => {
+export const signupCompany = async(
+    startupDetailsCID,
+    companyValuation,
+    walletID
+) => {
     try {
-        // const body = await axios.get(
-        //     "https://api.jakartanet.tzkt.io" +
-        //     "/v1/contracts/" +
-        //     "KT1DuHfMszQvvYaBVcmVxqZFZ1uVJpzC72u4" +
-        //     "/storage"
-        // );
-        const body = await axios.get(
-            `https://api.jakartanet.tzkt.io/v1/accounts/tz1dWJkEg7saFChP84YiVgQX2vy2gMxGWiAw/balance`
+        const contract = await tezos.wallet.at(
+            //Contract Address
+            "KT1NVPnVfJGAfJETT7AJdLSgUHvtckAX9r28"
         );
 
-        console.log(body);
-        return body.data;
+        const op = await contract.methods
+            .company_signup(
+                startupDetailsCID,
+                companyValuation,
+                walletID
+            )
+            .send({
+                amount: 50,
+                mutez: false,
+            });
+        await op.confirmation(1);
     } catch (error) {
-        return error;
+        console.log(error.message);
+        throw error;
+    }
+};
+/*
+common_options sp.TNat
+common_shares sp.TNat
+fd_percent sp.TNat
+fd_shares sp.TNat
+investment sp.TMutez
+preferred_shares sp.TNat
+stakeHolder_name sp.TString
+stakeHolder_profile_Id sp.TString
+stakeHolder_type sp.Tstring
+*/
+
+export const addFounders = async(
+    founderDetailsCID,
+    walletID
+) => {
+    try {
+        const contract = await tezos.wallet.at(
+            //Contract Address
+            "KT1NVPnVfJGAfJETT7AJdLSgUHvtckAX9r28"
+        );
+
+        const op = await contract.methods
+            .add_member_to_company(
+                5, 5, 0, 0, 1000, 10, "Anurag",
+                founderDetailsCID,
+                "founder"
+            )
+            .send({
+                amount: 0,
+                mutez: false,
+            });
+        await op.confirmation(1);
+    } catch (error) {
+        console.log(error.message);
+        throw error;
     }
 };
