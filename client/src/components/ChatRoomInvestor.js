@@ -22,6 +22,7 @@ import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 
 import { getActiveAccount } from '../utils/wallet';
+import { requestFromInvestor } from '../utils/operation';
 
 //Transaction Debit/credit/pending
 
@@ -80,8 +81,8 @@ const useStyles = makeStyles((theme) => ({
 
 export const ChatRoomInvestor = () => {
     const classes = useStyles();
-    const companyBigMapID = 69724;
-    const investorBigMapID = 69726;
+    const companyBigMapID = 74523;
+    const investorBigMapID = 74527;
 
     const [loading, setloading] = useState(false);
     const [wallet, setWallet] = useState(null);
@@ -89,6 +90,14 @@ export const ChatRoomInvestor = () => {
     const [conversationElements, setconversationElements] = useState(null);
     const [messageHash, setmessageHash] = useState();
     const [currentCompany, setcurrentCompany] = useState();
+    const [investementType, setinvestementType] = useState("SAFE");
+    const [loadingChats, setloadingChats] = useState(false);
+    const [investorPhotoCID, setinvestorPhotoCID] = useState();
+    const [companyPhotoCID, setcompanyPhotoCID] = useState();
+
+    const valuationCap = useRef();
+    const directEquity = useRef();
+    const investement = useRef();
 
     const typedMessage = useRef();
 
@@ -123,19 +132,23 @@ export const ChatRoomInvestor = () => {
     
     async function makeSendersList(){
         const investorDetails = await getKeyBigMapByID(investorBigMapID, wallet.address);
-        const sendersList = investorDetails.value["requested_companies"]
-        console.log(investorDetails);
+        const investorJSON = await fetchJSON(`https://ipfs.io/ipfs/${investorDetails.value["investor_profile_Id"]}`);
+        setinvestorPhotoCID(investorJSON.photoCID);
+        const sendersList = investorDetails.value["message_history"]
+
+        console.log(investorDetails, sendersList);
         const tempSenderlist = [];
-        for(let sender of sendersList){
+        for(let sender of Object.keys(sendersList)){
             const companyDetails = await getKeyBigMapByID(companyBigMapID, sender);
             const companyProfileHash = companyDetails.value["company_profile_Id"];
             const companyJSON = await fetchJSON(`https://ipfs.io/ipfs/${companyProfileHash}`);
+            setcompanyPhotoCID(companyJSON.photoCID);
             console.log(companyJSON);
             tempSenderlist.push(
                 <div key={sender}>
-                    <div onClick={()=>{ setcurrentCompany(sender);fetchSenderChats(sender, investorDetails.value["message_history"])}} className='row p-3'>
+                    <div onClick={()=>{ setcurrentCompany(sender);fetchSenderChats(sender, investorDetails.value["message_history"])}} className='row p-3' style={{cursor: "pointer"}}>
                         <div className='col-3'>
-                            <Avatar />
+                            <Avatar src={`https://ipfs.io/ipfs/${companyPhotoCID}`}/>
                         </div>
                         <div className='col-7'>
                             <h6 className='m-0'>{companyJSON.name}</h6>
@@ -159,6 +172,7 @@ export const ChatRoomInvestor = () => {
     }
 
     async function fetchSenderChats(companyAddress, messageHistory){
+        setloadingChats(true);
         const tempElements = [];
         // for(let request of initialRequestfromInvestors){
         //     if(request.investor === investorAddress)
@@ -224,7 +238,7 @@ export const ChatRoomInvestor = () => {
                                 <span>{message.split("=")[1]}</span>
                             </div>
                             <div className='text-center me-1'>
-                                <Avatar />
+                                <Avatar src={`https://ipfs.io/ipfs/${investorPhotoCID}`}/>
                                 <span className='font13 text-dark'>09:00</span>
                             </div>
                         </div>
@@ -237,7 +251,7 @@ export const ChatRoomInvestor = () => {
                     <div key={message} className='w-75' id='left-side-chat'>
                         <div className='d-flex my-3'>
                             <div className='text-center'>
-                                <Avatar />
+                                <Avatar src={`https://ipfs.io/ipfs/${companyPhotoCID}`}/>
                                 <span className='font13 text-dark'>09:00</span>
                             </div>
                             <div className='ms-3 background-light d-flex align-items-center p-3 text-dark left-chat'>
@@ -249,6 +263,7 @@ export const ChatRoomInvestor = () => {
             }
         }
         setconversationElements(tempElements);
+        setloadingChats(false);
     }
     function addTextIpfs(text){
         ipfs_mini.add(text).then((result, err)=>{
@@ -275,6 +290,15 @@ export const ChatRoomInvestor = () => {
         newMessage = newMessage;
         addTextIpfs(newMessage);
     }
+
+    const handleRequestFromInvestor = async (e) => {
+        e.preventDefault();
+        if(investementType === "DirectEquity")
+            requestFromInvestor(currentCompany, Number(directEquity.current.value), Number(investement.current.value), investementType, 0);
+        if(investementType === "SAFE")
+            requestFromInvestor(currentCompany, 0, Number(investement.current.value), investementType, Number(valuationCap.current.value));
+    }
+
 
     if(wallet && !sendersList){
         makeSendersList();
@@ -426,55 +450,59 @@ export const ChatRoomInvestor = () => {
                                             </Tooltip>
 
                                             <Tooltip title='Propose a Deal' aria-label='propose-a-deal'>
-                                                <button data-bs-toggle="modal" data-bs-target="#exampleModal" className='btn d-flex justify-content-center align-items-center rounded-circle sidebar-background text-white' style={{ width: '40px', height: '40px' }}>
+                                                <button data-bs-toggle="modal" data-bs-target="#requestingBtn" className='btn d-flex justify-content-center align-items-center rounded-circle sidebar-background text-white' style={{ width: '40px', height: '40px' }}>
                                                     <PaymentIcon />
                                                 </button>
                                             </Tooltip>
 
-                                            <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <form onSubmit={(e)=>{handleRequestFromInvestor(e)}} className="modal fade" id="requestingBtn" tabIndex="-1" aria-labelledby="requestingBtnLabel" aria-hidden="true">
                                                 <div className="modal-dialog my-auto">
                                                     <div className="modal-content">
                                                         <div className="modal-header bg-dark">
-                                                            <h5 className="modal-title" id="exampleModalLabel">Create an Offer</h5>
+                                                            <h5 className="modal-title" id="requestingBtnLabel">Raise Funds</h5>
                                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div className="modal-body">
-                                                            <div className="input-group mb-3">
-                                                                <span className="input-group-text">Investment</span>
-                                                                <input type="text" className="form-control" aria-label="Investment" />
-                                                                <span className="input-group-text">ꜩ</span>
-                                                            </div>
 
+                                                            <select defaultValue="SAFE" onChange={(e)=>{setinvestementType(e.target.value)}} className="form-select mb-3" aria-label="Default select example">
+                                                                <option disabled>Select Investment Type</option>
+                                                                <option value="SAFE">SAFE</option>
+                                                                <option value="DirectEquity">Direct Equity</option>
+                                                            </select>
+
+                                                            {investementType === "DirectEquity" ?
                                                             <div className="input-group mb-3">
-                                                                <span className="input-group-text">Ownership</span>
-                                                                <input type="text" className="form-control" aria-label="Ownership" />
+                                                                <span className="input-group-text">Direct Equity</span>
+                                                                <input ref={directEquity} type="number" className="form-control" aria-label="Direct Equity" required/>
                                                                 <span className="input-group-text">%</span>
-                                                            </div>
-
+                                                            </div> : null}
+                                                            {investementType === "SAFE" ?
                                                             <div className="input-group mb-3">
                                                                 <span className="input-group-text">Valuation Cap</span>
-                                                                <input type="text" className="form-control" aria-label="Valuation Cap" />
+                                                                <input ref={valuationCap} type="number" className="form-control" aria-label="Valuation Cap" required/>
+                                                            </div> : null}
+
+                                                            <div className="input-group mb-3">
+                                                                <span className="input-group-text">Investement</span>
+                                                                <input ref={investement} type="number" className="form-control" aria-label="Investement" required/>
                                                                 <span className="input-group-text">ꜩ</span>
                                                             </div>
-
-
-
 
                                                         </div>
                                                         <div className="modal-footer">
                                                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="button" className="btn background-primary text-white">Send Proposal</button>
+                                                            <button type="submit" className="btn background-primary text-white">Send Request</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             :
                             <div className='shadow-sm m-3 p-3 d-flex align-items-center justify-content-center flex-column' style={{ width: '60%' }}>
                                 <div className='background-purplepink p-3 m-3 rounded-circle'>
-                                    
+                                    {loadingChats ? <CircularProgress/> : null}
                                 </div>
                                 <span className='text-center m-0 text-secondary'>Start a Meaningful Converstation !</span>
                             </div>}

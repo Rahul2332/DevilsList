@@ -28,7 +28,7 @@ import { getActiveAccount } from '../utils/wallet';
 import SearchIcon from '@material-ui/icons/Search';
 import TelegramIcon from '@material-ui/icons/Telegram';
 import { getKeyBigMapByID } from '../utils/Api';
-import { changeMessageHash } from '../utils/operation';
+import { changeMessageHash, acceptOffer } from '../utils/operation';
 
 import ipfs_mini from '../ipfs_mini';
 
@@ -80,8 +80,8 @@ const useStyles = makeStyles((theme) => ({
 
 export const ChatRoom = () => {
     const classes = useStyles();
-    const companyBigMapID = 69724;
-    const investorBigMapID = 69726;
+    const companyBigMapID = 74523;
+    const investorBigMapID = 74527;
 
     const [loading, setloading] = useState(false);
     const [wallet, setWallet] = useState(null);
@@ -89,6 +89,10 @@ export const ChatRoom = () => {
     const [conversationElements, setconversationElements] = useState(null);
     const [messageHash, setmessageHash] = useState();
     const [currentInvestor, setcurrentInvestor] = useState();
+    const [loadingChats, setloadingChats] = useState(false);
+    const [requestAccepted, setrequestAccepted] = useState(null);
+    const [investorPhotoCID, setinvestorPhotoCID] = useState();
+    const [companyPhotoCID, setcompanyPhotoCID] = useState();
 
     const typedMessage = useRef();
 
@@ -123,19 +127,41 @@ export const ChatRoom = () => {
     
     async function makeSendersList(){
         const companyDetails = await getKeyBigMapByID(companyBigMapID, wallet.address);
-        const sendersList = companyDetails.value["request_from_investor"]
+        const companyJSON = await fetchJSON(`https://ipfs.io/ipfs/${companyDetails.value["company_profile_Id"]}`);
+        setcompanyPhotoCID(companyJSON.photoCID);
+        if(requestAccepted === null){
+            setrequestAccepted(companyDetails.value["request_accepted"]);
+            console.log(companyDetails.value["request_accepted"]);
+        }
+        const sendersList = companyDetails.value["investor_requests"]
         console.log(companyDetails);
+        console.log(sendersList);
         const tempSenderlist = [];
         for(let sender of sendersList){
             const investorDetails = await getKeyBigMapByID(investorBigMapID, sender.investor);
+            console.log(investorDetails, sender.investor);
             const investorProfileHash = investorDetails.value["investor_profile_Id"];
+            console.log(investorProfileHash);
             const investorJSON = await fetchJSON(`https://ipfs.io/ipfs/${investorProfileHash}`);
+            setinvestorPhotoCID(investorJSON.photoCID);
+
+            function listClickAction(){
+                if(!requestAccepted){
+                    fetchSenderChats(sender.investor, companyDetails.value["message_history"], companyDetails.value["investor_requests"]);
+                }
+                else{
+                    console.log(companyDetails.value["investor_accepted"], sender.investor)
+                    if(companyDetails.value["investor_accepted"] === sender.investor){
+                        fetchSenderChats(sender.investor, companyDetails.value["message_history"], companyDetails.value["investor_requests"])
+                    }
+                }
+            }
 
             tempSenderlist.push(
-                <div key={sender.investor}>
-                    <div onClick={()=>{ setcurrentInvestor(sender.investor);fetchSenderChats(sender.investor, companyDetails.value["message_history"], companyDetails.value["request_from_investor"])}} className='row p-3'>
+                <div key={sender.investor} style={{cursor: "pointer"}}>
+                    <div onClick={listClickAction} className='row p-3'>
                         <div className='col-3'>
-                            <Avatar />
+                            <Avatar src={`https://ipfs.io/ipfs/${investorPhotoCID}`}/>
                         </div>
                         <div className='col-7'>
                             <h6 className='m-0'>{investorJSON.name}</h6>
@@ -159,7 +185,8 @@ export const ChatRoom = () => {
     }
 
     async function fetchSenderChats(investorAddress, messageHistory, initialRequestfromInvestors){
-        console.log("fetching sender chats")
+        setcurrentInvestor(investorAddress);
+        setloadingChats(true);
         const tempElements = [];
         for(let request of initialRequestfromInvestors){
             if(request.investor === investorAddress)
@@ -167,20 +194,24 @@ export const ChatRoom = () => {
                     <div key={investorAddress} className='w-75' id='left-side-request'>
                         <div className='d-flex my-3'>
                             <div className='text-center'>
-                                <Avatar />
+                                <Avatar src={`https://ipfs.io/ipfs/${investorPhotoCID}`}/>
                                 <span className='font13 text-dark'>09:00</span>
                             </div>
                             <div className='ms-3 p-4 text-dark left-chat background-chat-request'>
                                 <div className='mb-3'>
+                                <div className='d-flex justify-content-between align-items-center text-light'>
+                                        <h6>Type</h6>
+                                        <span>{request.type}</span>
+                                    </div>
                                     <div className='d-flex justify-content-between align-items-center text-light'>
                                         <h6>Ownership</h6>
                                         <span>{request.ownership}%</span>
                                     </div>
-
+                                    {request.type === "SAFE" ?
                                     <div className='d-flex justify-content-between align-items-center text-light'>
                                         <h6>Valuation Cap</h6>
                                         <span>{request.valuation_cap} ꜩ</span>
-                                    </div>
+                                    </div> : null }
 
                                     <div className='d-flex justify-content-between align-items-center text-light'>
                                         <h6>Investment</h6>
@@ -189,11 +220,11 @@ export const ChatRoom = () => {
                                 </div>
 
                                 <div className='d-flex justify-content-between align-items-center'>
-                                    <Button className='me-3 text-black background-accept' variant='contained'>
+                                    <Button disabled={requestAccepted} onClick={() => {handleAcceptOffer(investorAddress)}} className='me-3 text-black background-accept' variant='contained'>
                                         <ThumbUpRoundedIcon className='text-black me-2' />
                                         Accept
                                     </Button>
-                                    <Button variant='contained' className='background-deny'>
+                                    <Button disabled={requestAccepted} variant='contained' className='background-deny'>
                                         <ThumbDownRoundedIcon className='me-2' />
                                         Deny
                                     </Button>
@@ -202,9 +233,10 @@ export const ChatRoom = () => {
                         </div>
                     </div>
                 );
+            setloadingChats(false);
         }
-        console.log(tempElements)
-        if(messageHistory[`${investorAddress}`] === "") {
+        console.log(messageHistory[`${investorAddress}`])
+        if(messageHistory[`${investorAddress}`] === undefined) {
             setconversationElements(tempElements);
             return;
         }
@@ -225,7 +257,7 @@ export const ChatRoom = () => {
                                 <span>{message.split("=")[1]}</span>
                             </div>
                             <div className='text-center me-1'>
-                                <Avatar />
+                                <Avatar src={`https://ipfs.io/ipfs/${companyPhotoCID}`}/>
                                 <span className='font13 text-dark'>09:00</span>
                             </div>
                         </div>
@@ -238,7 +270,7 @@ export const ChatRoom = () => {
                     <div key={message} className='w-75' id='left-side-chat'>
                         <div className='d-flex my-3'>
                             <div className='text-center'>
-                                <Avatar />
+                                <Avatar src={`https://ipfs.io/ipfs/${investorPhotoCID}`}/>
                                 <span className='font13 text-dark'>09:00</span>
                             </div>
                             <div className='ms-3 background-light d-flex align-items-center p-3 text-dark left-chat'>
@@ -265,7 +297,7 @@ export const ChatRoom = () => {
         const oldMessageHash = messageHistory[`${currentInvestor}`];
         let newMessage;
 
-        if(oldMessageHash === ""){
+        if(oldMessageHash === undefined){
             newMessage = "s:" + "7:00" + "=" + typedMessage.current.value + "|";
         }
         else{
@@ -279,6 +311,15 @@ export const ChatRoom = () => {
 
     if(wallet && !sendersList){
         makeSendersList();
+    }
+
+    async function handleAcceptOffer(investorAddress){
+        try{
+            await acceptOffer(investorAddress);
+            window.location.reload();
+        }catch(error){
+            alert("Transaction Failed:", error.message);
+        }
     }
 
     return (
@@ -426,12 +467,6 @@ export const ChatRoom = () => {
                                                 </button>
                                             </Tooltip>
 
-                                            <Tooltip title='Propose a Deal' aria-label='propose-a-deal'>
-                                                <button data-bs-toggle="modal" data-bs-target="#exampleModal" className='btn d-flex justify-content-center align-items-center rounded-circle sidebar-background text-white' style={{ width: '40px', height: '40px' }}>
-                                                    <PaymentIcon />
-                                                </button>
-                                            </Tooltip>
-
                                             <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div className="modal-dialog my-auto">
                                                     <div className="modal-content">
@@ -475,7 +510,7 @@ export const ChatRoom = () => {
                             :
                             <div className='shadow-sm m-3 p-3 d-flex align-items-center justify-content-center flex-column' style={{ width: '60%' }}>
                                 <div className='background-purplepink p-3 m-3 rounded-circle'>
-                                    
+                                    {loadingChats ? <CircularProgress/> : null}
                                 </div>
                                 <span className='text-center m-0 text-secondary'>Start a Meaningful Converstation !</span>
                             </div>}
