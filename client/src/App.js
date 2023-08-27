@@ -20,6 +20,7 @@ import { ProfileCompany } from "./components/ProfileCompany"
 import { CapTable } from "./components/CapTable"
 import { TrackTransactionsCompany } from "./components/TrackTransactionsCompany"
 import { ViewCompanyPortfolio } from "./components/ViewCompanyPortfolio"
+import { ProfileInvestor } from "./components/ProfileInvestor"
 
 import { HireEmployees } from "./components/HireEmployees"
 import { EmployeesAppointed } from "./components/EmployeesAppointed";
@@ -27,6 +28,7 @@ import { EmployeesAppointed } from "./components/EmployeesAppointed";
 import { Trash } from "./components/Trash"
 // import { SideNav } from "./components/SideNav"
 import { Test } from "./components/Test";
+import { ChatRoomInvestor } from "./components/ChatRoomInvestor";
 // import Navbar from "./components/Navbar";
   
   function App() {
@@ -46,10 +48,12 @@ import { Test } from "./components/Test";
           <Route path='/startups-list-investor' element={<StartupsListInvestor/>} />
           <Route path='/investment-request' element={<InvestmentRequest/>} />
           <Route path='/chatroom' element={<ChatRoom/>} />
+          <Route path='/chatroom-investor' element={<ChatRoomInvestor/>} />
           <Route path='/add-founders' element={<AddFounders/>} />
           <Route path="*" element={<Home/>} />
           <Route path='/make-payment' element={<MakePayment/>} />
           <Route path='/profile-company' element={<ProfileCompany/>} />
+          <Route path='/profile-investor' element={<ProfileInvestor/>} />
           <Route path='/trash' element={<Trash/>} />
           <Route path='/cap-table' element={<CapTable/>} />
           <Route path='/track-transactions-company' element={<TrackTransactionsCompany/>} />

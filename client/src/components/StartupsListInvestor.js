@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -68,29 +68,35 @@ export const StartupsListInvestor = () => {
     const classes = useStyles();
     const [age, setAge] = React.useState('');
     const [storage, setstorage] = useState();
-    const [startupCards, setstartupCards] = useState([]);
+    const [startupCards, setstartupCards] = useState(null);
+    // companyWalletAddress, directEquity, investement, type
+    const valuationCap = useRef();
+    const directEquity = useRef();
+    const investement = useRef();
+    const [investementType, setinvestementType] = useState("SAFE");
+    const [companyWalletAddress, setcompanyWalletAddress] = useState();
 
-    const companyBigMapID = 64865;
+    const companyBigMapID = 69724;
 
     useEffect(() => {
-        const retrieveStorage = async () => {
-            const st = await getRootStorage();
-            console.log(st);
-            setstorage(st);
-        }
-        if (!storage)
-            retrieveStorage();
+      const retrieveStorage = async () => {
+        const st = await getRootStorage();
+        console.log(st);
+        setstorage(st);
+      }
+      if(!storage)
+        retrieveStorage();
     }, [])
 
     async function fetchJSON(url) {
         const response = await fetch(url);
-        const movies = await response.json();
-        return movies;
+        const jsonfile = await response.json();
+        return jsonfile;
     }
 
-    async function makeCards() {
+    async function makeCards(){
         const allCards = [];
-        for (let companyAddress of storage["companies_for_funding"]) {
+        for( let companyAddress of storage["companies_for_funding"]){
             console.log(companyAddress);
 
             const companyDetails = await getKeyBigMapByID(companyBigMapID, companyAddress);
@@ -115,47 +121,10 @@ export const StartupsListInvestor = () => {
                         <p className="card-text font13 text-secondary">{companyJSON.whatWillCompanyDo}</p>
                         <div className='d-flex align-items-center justify-content-between'>
                             <h6 className='fw-bold mb-0'>{fundraiseDetails.investment} ꜩ</h6>
-                            <Button onClick={handleRequestFromInvestor} style={{ textTransform: 'capitalize' }} size='small' variant='contained' color="primary" data-bs-toggle="modal" data-bs-target="#RaiseFund">Request</Button>
+                            <Button onClick={()=>{setcompanyWalletAddress(companyAddress)}}style={{ textTransform: 'capitalize' }} size='small' variant='contained' color="primary" data-bs-toggle="modal" data-bs-target="#requestingBtn">Request</Button>
                             <Link to={"/view-startup-profile?profile=" + companyProfileHash}>
-                                <Button className='' style={{ textTransform: 'capitalize' }} size='small' variant='outlined' color="primary" >View Profile</Button>
+                                <Button className='' style={{ textTransform: 'capitalize' }} size='small' variant='outlined' color="primary">View Profile</Button>
                             </Link>
-
-                            <div className="modal fade" id="RaiseFund" tabindex="-1" aria-labelledby="RaiseFundLabel" aria-hidden="true">
-                                <div className="modal-dialog my-auto">
-                                    <div className="modal-content">
-                                        <div className="modal-header bg-dark">
-                                            <h5 className="modal-title" id="RaiseFundLabel">Raise Funds</h5>
-                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div className="modal-body">
-
-                                            <select className="form-select mb-3" aria-label="Default select example">
-                                                <option selected>Select Investment Type</option>
-                                                <option value="SAFE">SAFE</option>
-                                                <option value="DirectEquity">Direct</option>
-                                                <option value="SAFT">SAFT</option>
-                                            </select>
-
-                                            <div className="input-group mb-3">
-                                                <span className="input-group-text">Ownership</span>
-                                                <input type="number" className="form-control" aria-label="Ownership" />
-                                                <span className="input-group-text">%</span>
-                                            </div>
-
-                                            <div className="input-group mb-3">
-                                                <span className="input-group-text">Investement</span>
-                                                <input type="number" className="form-control" aria-label="Valuation Cap" />
-                                                <span className="input-group-text">ꜩ</span>
-                                            </div>
-
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" className="btn background-primary text-white">Dhinkachika</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -163,15 +132,26 @@ export const StartupsListInvestor = () => {
         }
         setstartupCards(allCards)
     }
-    if (storage && startupCards.length === 0)
+    if(storage && startupCards===null)
         makeCards();
 
     const handleChange = (event) => {
         setAge(event.target.value);
     };
 
-    async function handleRequestFromInvestor() {
-
+    const handleRequestFromInvestor = async (e) => {
+        e.preventDefault();
+        // console.log(companyWalletAddress)
+        // if(investementType === "DirectEquity")
+        //     console.log(typeof Number(directEquity.current.value))
+        // if(investementType === "SAFE")
+        //     console.log(typeof Number(valuationCap.current.value))
+        // console.log(typeof Number(investement.current.value))
+        // console.log(typeof investementType)
+        if(investementType === "DirectEquity")
+            requestFromInvestor(companyWalletAddress, Number(directEquity.current.value), Number(investement.current.value), investementType, 0);
+        if(investementType === "SAFE")
+            requestFromInvestor(companyWalletAddress, 0, Number(investement.current.value), investementType, Number(valuationCap.current.value));
     }
 
     return (
@@ -194,27 +174,69 @@ export const StartupsListInvestor = () => {
                                         <SearchIcon style={{ color: 'white' }} />
                                     </button>
                                 </div>
-                                <FormControl className='col-2 cardColorPinkish shadow-sm' variant='filled' style={{ fontFamily: 'kanit' }}>
-                                    <InputLabel id="demo-simple-select-label" style={{ fontFamily: 'kanit' }}>Sort</InputLabel>
+                                <FormControl className='col-2 cardColorPinkish shadow-sm' variant='filled' style={{fontFamily:'kanit'}}>
+                                    <InputLabel id="demo-simple-select-label" style={{fontFamily:'kanit'}}>Sort</InputLabel>
                                     <Select
                                         className='cardColorPinkish'
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={age}
                                         onChange={handleChange}
-                                        style={{ fontFamily: 'kanit' }}
+                                        style={{fontFamily:'kanit'}}
                                     >
                                         <MenuItem value="">
-                                            <em style={{ fontFamily: 'kanit' }}>None</em>
+                                            <em style={{fontFamily:'kanit'}}>None</em>
                                         </MenuItem>
-                                        <MenuItem value={10} style={{ fontFamily: 'kanit' }}>Ascending</MenuItem>
-                                        <MenuItem value={20} style={{ fontFamily: 'kanit' }}>Dscending</MenuItem>
+                                        <MenuItem value={10} style={{fontFamily:'kanit'}}>Ascending</MenuItem>
+                                        <MenuItem value={20} style={{fontFamily:'kanit'}}>Dscending</MenuItem>
                                     </Select>
                                 </FormControl>
                             </div>
                             <div className='d-flex flex-wrap'>
                                 {startupCards}
                             </div>
+
+                            <form onSubmit={(e)=>{handleRequestFromInvestor(e)}} className="modal fade" id="requestingBtn" tabindex="-1" aria-labelledby="requestingBtnLabel" aria-hidden="true">
+                            <div className="modal-dialog my-auto">
+                                <div className="modal-content">
+                                    <div className="modal-header bg-dark">
+                                        <h5 className="modal-title" id="requestingBtnLabel">Raise Funds</h5>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div className="modal-body">
+
+                                        <select onChange={(e)=>{setinvestementType(e.target.value)}} className="form-select mb-3" aria-label="Default select example">
+                                            <option disabled>Select Investment Type</option>
+                                            <option selected value="SAFE">SAFE</option>
+                                            <option value="DirectEquity">Direct Equity</option>
+                                        </select>
+
+                                        {investementType === "DirectEquity" ?
+                                        <div className="input-group mb-3">
+                                            <span className="input-group-text">Direct Equity</span>
+                                            <input ref={directEquity} type="number" className="form-control" aria-label="Direct Equity" required/>
+                                            <span className="input-group-text">%</span>
+                                        </div> : null}
+                                        {investementType === "SAFE" ?
+                                        <div className="input-group mb-3">
+                                            <span className="input-group-text">Valuation Cap</span>
+                                            <input ref={valuationCap} type="number" className="form-control" aria-label="Valuation Cap" required/>
+                                        </div> : null}
+
+                                        <div className="input-group mb-3">
+                                            <span className="input-group-text">Investement</span>
+                                            <input ref={investement} type="number" className="form-control" aria-label="Investement" required/>
+                                            <span className="input-group-text">ꜩ</span>
+                                        </div>
+
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" className="btn background-primary text-white">Send Request</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                         </div>
                     </div>
                 </main>
@@ -222,10 +244,3 @@ export const StartupsListInvestor = () => {
         </>
     )
 }
-
-
-
-
-
-
-
