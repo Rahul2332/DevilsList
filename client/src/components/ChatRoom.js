@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { NFTStorage, File } from 'nft.storage'
+
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -7,17 +9,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import ViewListIcon from '@material-ui/icons/ViewList';
-import ViewModuleIcon from '@material-ui/icons/ViewModule';
-import ViewQuiltIcon from '@material-ui/icons/ViewQuilt';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Navbar from './CompanyNavbar';
 import NavFloating from './NavFloating';
 
-import PaymentIcon from '@material-ui/icons/Payment';
 import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 
@@ -83,6 +79,8 @@ export const ChatRoom = () => {
     const classes = useStyles();
     const companyBigMapID = 79636;
     const investorBigMapID = 79640;
+
+    const nftstore_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDJENkM4Qjg4RWY2YzY4YTU1NzdGMGZhOUU3MDE4ODU1ODk5YTYzQzkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2MDI0NDkwMjI5MiwibmFtZSI6IkRldmlsc0xpc3QifQ.fuOaSEThIZdIxTzNUQ-yOc4gvcuzv4K3LssZGSw6thc"
 
     const [loading, setloading] = useState(false);
     const [wallet, setWallet] = useState(null);
@@ -159,16 +157,13 @@ export const ChatRoom = () => {
 
             tempSenderlist.push(
                 <div key={sender.investor} style={{cursor: "pointer"}}>
-                    <div onClick={listClickAction} className='row p-3'>
-                        <div className='col-3'>
+                    <div onClick={listClickAction} className={'d-flex p-3 chatSelected'}>
+                        <div style={{width:'25%'}}>
                             <Avatar src={"https://" + investorimageHash + ".ipfs.dweb.link/blob"}/>
                         </div>
-                        <div className='col-7'>
+                        <div style={{width:'55%'}}>
                             <h6 className='m-0'>{investorJSON.data.name}</h6>
-                            <span className='text-secondary font13'>Type a message</span>
-                        </div>
-                        <div className='col-2'>
-                            <span className='text-secondary font13'></span>
+                            <span className='text-secondary font13'>Click to view chat</span>
                         </div>
                     </div>
 
@@ -177,11 +172,6 @@ export const ChatRoom = () => {
             )
         }
         setsendersList(tempSenderlist);
-    }
-
-    async function fetchText(url) {
-        const response = await fetch(url);
-        return response.text();
     }
 
     async function fetchSenderChats(investorAddress, messageHistory, initialRequestfromInvestors){
@@ -242,8 +232,8 @@ export const ChatRoom = () => {
         }
 
         const messageHashInStorage = messageHistory[`${investorAddress}`];
-        const messagesString = await fetchText(`https://ipfs.io/ipfs/${messageHashInStorage}`);
-
+        const messagesStringJson = await axios("https://" + messageHashInStorage + ".ipfs.dweb.link/metadata.json");
+        const messagesString = messagesStringJson.data.chats;
         const messagesArr = messagesString.split("|");
 
         for(let message of messagesArr){
@@ -257,7 +247,7 @@ export const ChatRoom = () => {
                                 <span>{message.split("=")[1]}</span>
                             </div>
                             <div className='text-center me-1'>
-                                <Avatar src={`https://ipfs.io/ipfs/${companyPhotoCID}`}/>
+                                <Avatar src={"https://" + companyPhotoCID + ".ipfs.dweb.link/blob"}/>
                                 <span className='font13 text-dark'>09:00</span>
                             </div>
                         </div>
@@ -270,7 +260,7 @@ export const ChatRoom = () => {
                     <div key={message} className='w-75' id='left-side-chat'>
                         <div className='d-flex my-3'>
                             <div className='text-center'>
-                                <Avatar src={`https://ipfs.io/ipfs/${investorPhotoCID}`}/>
+                                <Avatar src={"https://" + investorPhotoCID + ".ipfs.dweb.link/blob"}/>
                                 <span className='font13 text-dark'>09:00</span>
                             </div>
                             <div className='ms-3 background-light d-flex align-items-center p-3 text-dark left-chat'>
@@ -283,10 +273,17 @@ export const ChatRoom = () => {
         }
         setconversationElements(tempElements);
     }
-    function addTextIpfs(text){
-        ipfs_mini.add(text).then((result, err)=>{
-            console.log(err, result)
-            setmessageHash(result)}).catch(console.log);
+    async function addTextIpfs(text){
+        const client = new NFTStorage({ token:  nftstore_token});
+        const data = {
+            name: "Chats",
+            description: "chats",
+            image: new File([], 'blob'),
+            chats: text
+        };
+        const metadata = await client.store(data);
+        console.log("metadata", metadata);
+        setmessageHash(metadata.ipnft);
     }
 
     async function handleMessageSend(){
@@ -301,11 +298,11 @@ export const ChatRoom = () => {
             newMessage = "s:" + "7:00" + "=" + typedMessage.current.value + "|";
         }
         else{
-            const messageString = await fetchText(`https://ipfs.io/ipfs/${oldMessageHash}`);
-            newMessage = messageString + "s:" + "7:00" + "=" + typedMessage.current.value + "|";
+            // const messageString = await fetchText(`https://ipfs.io/ipfs/${oldMessageHash}`);
+            const messageStringJson = await axios("https://" + oldMessageHash + ".ipfs.dweb.link/metadata.json")
+            newMessage = messageStringJson.data.chats + "s:" + "7:00" + "=" + typedMessage.current.value + "|";
         }
-        const dateNow = Date.now();
-        newMessage = newMessage;
+
         addTextIpfs(newMessage);
     }
 
@@ -346,7 +343,7 @@ export const ChatRoom = () => {
                                         <SearchIcon style={{ color: 'white' }} />
                                     </button>
                                 </div>
-                                <div className='container shadow mt-4 rounded15' style={{ overflow: 'auto', height: '380px' }}>
+                                <div className='shadow mt-4 rounded15' style={{ overflowY: 'auto', height: '380px' }}>
                                   {sendersList}
                                 </div>
                             </div>
