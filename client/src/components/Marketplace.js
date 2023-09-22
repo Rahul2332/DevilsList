@@ -1,21 +1,27 @@
-import React ,{useState} from 'react';
-import { connectWallet } from '../utils/wallet';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { getRootStorage } from '../utils/Api';
+import { getActiveAccount, connectWallet } from '../utils/wallet';
 
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import Badge from '@material-ui/core/Badge';
+import IconButton from '@material-ui/core/IconButton';
+import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import SearchIcon from '@material-ui/icons/Search';
 import Divider from '@material-ui/core/Divider';
 
-import sample1 from '../images/logo/sample-1.jpg'
-import sample2 from '../images/logo/sample-2.jpg'
-import dragon_glass from '../images/logo/dragon_glass.png'
+import stock1 from '../images/stocks/stock1.png'
+import stock2 from '../images/stocks/stock2.png'
+import stock3 from '../images/stocks/stock3.png'
 
-import chart1 from '../images/charts/chart1.png'
-import chart3 from '../images/charts/chart3.png'
-import chart5 from '../images/charts/chart5.png'
-
-import marketplace from '../images/marketplace.png'
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-
-import Avatar from '@material-ui/core/Avatar';
+import img1 from '../images/home/end_minus_5.png';
+import img2 from '../images/home/end_minus_4.png';
+import img3 from '../images/home/end_minus_3.png';
+import img4 from '../images/home/end_minus_2.png';
+import img5 from '../images/home/end_minus_1.png';
+import img6 from '../images/home/end.png';
+import img7 from '../images/home/end_plus_1.png';
+import angellist_abstract from '../images/stocks/angellist_abstract.png'
 
 import TwitterIcon from '@material-ui/icons/Twitter';
 import InstagramIcon from '@material-ui/icons/Instagram';
@@ -23,215 +29,67 @@ import YouTubeIcon from '@material-ui/icons/YouTube';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import RedditIcon from '@material-ui/icons/Reddit';
-import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined'
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
-import AccountBalanceWalletOutlinedIcon from '@material-ui/icons/AccountBalanceWalletOutlined';
 
+import angellist_logo from '../images/home/angellist_logo.png'
+import devils_logo_img from '../images/logo/devils_logo_800px_trans.png'
+import devils_logo_svg from '../images/logo/devils_logo.svg'
 import small_devils_logo from '../images/logo/small_devils_logo.png'
+
+
 import { Button } from '@material-ui/core';
 
-// Step 2 - Include the react-fusioncharts component
-import ReactFC from "react-fusioncharts";
-
-// Step 3 - Include the fusioncharts library
-import FusionCharts from "fusioncharts";
-
-// Step 4 - Include the chart type
-import Column2D from "fusioncharts/fusioncharts.charts";
-import ZoomLine from "fusioncharts/fusioncharts.zoomline"
-
-// Step 5 - Include the theme as fusion
-import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
-import { getKeyBigMapByID, getRootStorage } from '../utils/Api';
-import { useNavigate } from 'react-router-dom';
-
-// Step 6 - Adding the chart and theme as dependency to the core fusioncharts
-ReactFC.fcRoot(FusionCharts, ZoomLine, Column2D, FusionTheme);
-
-const nftGraphConfigs = {
-    type: "msline", // The chart type
-    width: "1100", // Width of the chart
-    height: "400", // Height of the chart
-    dataFormat: "json", // Data type
-    dataSource: {
-        "chart": {
-            "theme": "fusion",
-            // "caption": "Number of visitors last week",
-            // "subCaption": "Bakersfield Central vs Los Angeles Topanga",
-            "xAxisName": "Day"
-        },
-        "categories": [
-            {
-                "category": [
-                    {
-                        "label": "Mon"
-                    },
-                    {
-                        "label": "Tue"
-                    },
-                    {
-                        "label": "Wed"
-                    },
-                    {
-                        "label": "Thu"
-                    },
-                    {
-                        "label": "Fri"
-                    },
-                    {
-                        "label": "Sat"
-                    },
-                    {
-                        "label": "Sun"
-                    }
-                ]
-            }
-        ],
-        "dataset": [
-            {
-                "seriesname": "Phoenix Artworks",
-                "data": [
-                    {
-                        "value": "0.24"
-                    },
-                    {
-                        "value": "0.72"
-                    },
-                    {
-                        "value": "1.07"
-                    },
-                    {
-                        "value": "2.110"
-                    },
-                    {
-                        "value": "2.5529"
-                    },
-                    {
-                        "value": "0.56"
-                    },
-                ]
-            },
-            {
-                "seriesname": "Dragon Glass",
-                "data": [
-                    {
-                        "value": "4"
-                    },
-                    {
-                        "value": "4"
-                    },
-                    {
-                        "value": "4"
-                    },
-                    {
-                        "value": "4"
-                    },
-                    {
-                        "value": "4"
-                    },
-                    {
-                        "value": "4"
-                    },
-                ]
-            },
-            {
-                "seriesname": "Supeme Fertilizers Pvt. Ltd.",
-                "data": [
-                    {
-                        "value": "1.3400"
-                    },
-                    {
-                        "value": "1.2800"
-                    },
-                    {
-                        "value": "2.2800"
-                    },
-                    {
-                        "value": "1.2400"
-                    },
-                    {
-                        "value": "1.5800"
-                    },
-                    {
-                        "value": "1.62"
-                    },
-                ]
-            }
-        ],
-        "trendlines": [
-            {
-                "line": [
-                    {
-                        "startvalue": "1.00",
-                        "color": "#62B58F",
-                        "valueOnRight": "1",
-                        "displayvalue": "Average"
-                    }
-                ]
-            }
-        ]
-    }
-}
-
-
-
 export const Marketplace = () => {
-    const companyBigMapID = 88413;
 
     const navigate = useNavigate();
+    const [connectAndLogin, setconnectAndLogin] = useState(false);
 
-    const [firmsList, setfirmsList] = useState();
     const [wallet, setWallet] = useState(null);
+    useEffect(() => {
+        if (wallet) {
+            setconnectAndLogin(true);
+        }
+        (async () => {
+            const activeAccount = await getActiveAccount();
+            setWallet(activeAccount);
+        })();
+    }, []);
+
+    useEffect(() => {
+        const connectAndLoginFun = async () => {
+            const storage = await getRootStorage();
+
+            for (let companyAddress of storage["all_companies"]) {
+                console.log(wallet.address, companyAddress)
+                if (wallet.address === companyAddress)
+                    navigate("/dashboard-company", true);
+            }
+            for (let investorAddress of storage["all_investors"]) {
+                console.log(wallet.address, investorAddress)
+                if (wallet.address === investorAddress)
+                    navigate("/dashboard-investor");
+            }
+            for (let employeeAddress of storage["all_employee"]) {
+                console.log(wallet.address, employeeAddress)
+                if (wallet.address === employeeAddress)
+                    navigate("/dashboard-company");
+            }
+        }
+        if (wallet && connectAndLogin)
+            connectAndLoginFun()
+    }, [wallet, connectAndLogin]);
+
     const handleConnectWallet = async () => {
         const { wallet } = await connectWallet();
         setWallet(wallet);
-        navigate("/buy-sell-tokens");
     };
 
-    async function makeFirmsList(){
-        const temp = [];
-        const storage = await getRootStorage();
-
-        for (let companyAddress of storage["all_companies"]) {
-            const companyDetails = await getKeyBigMapByID(companyBigMapID, companyAddress);
-            const totalShares = companyDetails.value["total_shares"];
-            const companyValuation = companyDetails.value["company_valuation"];
-            const companyProfileHash = companyDetails.value["company_profile_Id"];
-
-            const companyJSON = await axios("https://" + companyProfileHash + ".ipfs.dweb.link/metadata.json")
-            const companyName = companyJSON.data.name;
-            const companyUri = companyJSON.data.image;
-            const companyPhotoHash = companyUri.substring(7, companyUri.length-5);
-
-            temp.push(
-                <>
-                    <div key={companyProfileHash} className='d-flex justify-content-between align-items-center'>
-                        <div className='d-flex justify-content-between align-items-center'>
-                            <Avatar className='me-4' src={"https://" + companyPhotoHash + ".ipfs.dweb.link/blob"} />
-                            <div>
-                                <p className='mb-0 fw-bold'>{companyName}</p>
-                                <p className='mb-0 font13 text-secondary'>{totalShares} Tokens</p>
-                            </div>
-                        </div>
-                        <img style={{ height: '40px' }} src={chart1} />
-                        <div className='d-flex justify-content-around text-align-center'>
-                            <div className='text-center'>
-                                <p className='mb-0 fw-bold'>{companyValuation/totalShares} ꜩ</p>
-                                <p className='mb-0 font13 text-secondary'>Price per Token</p>
-                            </div>
-
-                            <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded px-2 ms-3' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
-                                <span className='fw-bold font13' style={{}}>0 . 00%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
-                </>
-            );
-            setfirmsList(temp);
+    async function handleLogin() {
+        if (!wallet) {
+            await handleConnectWallet();
+            setconnectAndLogin(true);
         }
+        setconnectAndLogin(true);
     }
-    if(!firmsList) makeFirmsList();
 
     return (
         <>
@@ -240,157 +98,72 @@ export const Marketplace = () => {
                     <img src={small_devils_logo} style={{ width: '48px' }} />
                     <span className='pt-3 ms-3 fw-bold' style={{ fontFamily: 'devils_lairs_font', fontSize: '40px', alignSelf: 'flex-end' }}>Devils Marketplace</span>
                 </div>
-                <Button onClick={handleConnectWallet} className='mx-2' variant="outlined" color="primary">
-                    Log in
-                </Button>
+                {/* <span className='font15 ms-5 ps-5 fw-bold'>Dashboard</span> */}
+                <div className='d-flex align-items-center w-50 justify-content-between'>
+                    {/* <span className='btn'>For Investors</span>
+                    <span className='btn'>For Fund Managers</span>
+                    <span className='btn'>For Founders</span>
+                    <span className='btn'>Company</span>
+                    <span className='btn'>Help</span> */}
+                </div>
+
+                <div className='d-flex justify-content-between align-items-center'>
+                    <Button className='mx-2' variant="outlined" color="primary" onClick={handleLogin}>
+                        Log in
+                    </Button>
+                    <Link to='/sign-up'>
+                        <Button className='mx-2' variant="contained" color="primary">
+                            Join
+                        </Button>
+                    </Link>
+                </div>
             </nav>
 
-            <div className='px-3'>
-                <div className='d-flex justify-content-between'>
-                    <div className='w-50 shadow bg-white rounded d-flex justify-content-between align-items-end'>
-                        <div className='p-4' style={{ width: '52%' }}>
-                            <h4 className='fw-bold pe-3 mb-3'>Buy and Sell Company Tokens.</h4>
-                            <p className='text-secondary mb-3'>The world's first decentralized marketplace with FA2 company tokens.</p>
-                            <div className='d-flex justify-content-between'>
-                                <Button style={{ backgroundColor: '#405189', textTransform: 'capitalize' }} color='primary' variant='contained'>Buy Token</Button>
-                                <Button style={{ backgroundColor: '#0ab39c', textTransform: 'capitalize' }} color='primary' variant='contained'>Sell Token</Button>
-                            </div>
-                        </div>
-                        <div style={{ width: '48%' }}>
-                            <img className='w-100' src={marketplace} />
-                        </div>
-                    </div>
-                    <div className='w-25 px-2'>
-                        <div className='bg-white h-100 p-3 shadow'>
-                            <div className='d-flex justify-content-between align-items-center'>
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <div className='p-2 rounded' style={{ backgroundColor: 'rgba(64,81,137,.1)', color: 'rgba(64,81,137,1)' }}>
-                                        <MonetizationOnOutlinedIcon style={{ width: '40px', height: '40px' }} />
-                                    </div>
-                                    <span className='ms-3 fw-bold text-secondary'>BUYER REQUESTS</span>
-                                </div>
-                                <MoreVertIcon />
-                            </div>\
-                            <h4 className='fw-bold my-4'>1,571</h4>
-
-                            <div className='d-flex'>
-                                <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
-                                    <KeyboardArrowUpIcon className='font15' />
-                                    <span className='fw-bold font13' style={{}}>2 . 74%</span>
-                                </div>
-                                <span className='text-secondary'>vs. previous month</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='w-25 px-2'>
-                        <div className='bg-white h-100 p-3 shadow'>
-                            <div className='d-flex justify-content-between align-items-center'>
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <div className='p-2 rounded' style={{ backgroundColor: 'rgba(64,81,137,.1)', color: 'rgba(64,81,137,1)' }}>
-                                        <AccountBalanceWalletOutlinedIcon style={{ width: '40px', height: '40px' }} />
-                                    </div>
-                                    <span className='ms-3 fw-bold text-secondary'>SELLER REQUESTS</span>
-                                </div>
-                                <MoreVertIcon />
-                            </div>
-                            <h4 className='fw-bold my-4'>1,526</h4>
-                            <div className='d-flex'>
-                                <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
-                                    <KeyboardArrowUpIcon className='font15' />
-                                    <span className='fw-bold font13' style={{}}>3 . 24%</span>
-                                </div>
-                                <span className='text-secondary'>vs. previous month</span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="p-5 mb-4 mx-5 background-light-purple rounded-3 d-flex">
+                <div class="container-fluid py-4" style={{ width: '55%' }}>
+                    <h1 class="display-5 fw-bold mb-3">Invest in world-changing startups</h1>
+                    <p class="col-md-8 fs-4 p-0 mb-5">Join leading investors funding the next wave of world-changing startups.</p>
+                    <button class="btn button-purple text-white btn-lg" type="button">Invest Now</button>
                 </div>
-
-                <div className='shadow my-4 p-4'>
-                    <div className='d-flex justify-content-between align-items-center'>
-                        <h5 className='fw-bold mb-0'>Top Firms</h5>
-                        <MoreVertIcon />
-                    </div>
-                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
-
-                    {firmsList}
-                    <div className='d-flex justify-content-between align-items-center'>
-                        <div className='d-flex justify-content-between align-items-center'>
-                            <Avatar className='me-4' src={sample1} />
-                            <div>
-                                <p className='mb-0 fw-bold'>Supreme Pvt. Ltd.</p>
-                                <p className='mb-0 font13 text-secondary'>3,600 Tokens</p>
-                            </div>
-                        </div>
-                        <img style={{ height: '40px' }} src={chart5} />
-                        <div className='d-flex justify-content-around text-align-center'>
-                            <div className='text-center'>
-                                <p className='mb-0 fw-bold'>2 . 56 ꜩ</p>
-                                <p className='mb-0 font13 text-secondary'>Price per Token</p>
-                            </div>
-
-                            <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded px-2 ms-3' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
-                                <span className='fw-bold font13' style={{}}>+ 2 . 15%</span>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
-
-                    <div className='d-flex justify-content-between align-items-center'>
-                        <div className='d-flex justify-content-between align-items-center'>
-                            <Avatar className='me-4' src={sample2} />
-                            <div>
-                                <p className='mb-0 fw-bold'>Phoenix Artworks </p>
-                                <p className='mb-0 font13 text-secondary'>4,000 Tokens</p>
-                            </div>
-                        </div>
-                        <img style={{ height: '40px' }} src={chart3} />
-                        <div className='d-flex justify-content-around text-align-center'>
-                            <div className='text-center'>
-                                <p className='mb-0 fw-bold'>1 . 62 ꜩ</p>
-                                <p className='mb-0 font13 text-secondary'>Price per Token</p>
-                            </div>
-
-                            <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded px-2 ms-3' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
-                                <span className='fw-bold font13' style={{}}>+ 2 . 12%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
-
-
-
-                </div>
-                <div className='my-5 p-4 bg-white shadow mx-auto text-center'>
-                    <h5>Token Analysis</h5>
-                    <div className='d-flex align-items-center my-3 '>
-                        <div className='w-25 text-center border p-2'>
-                            <h5 className='m-0 font15 fw-bold'>245</h5>
-                            <p className='m-0 text-secondary'>Token Orders</p>
-                        </div>
-                        <div className='w-25 text-center border p-2'>
-                            <h5 className='m-0 font15 fw-bold'>7,600</h5>
-                            <p className='m-0 text-secondary'>Tokens Sold</p>
-                        </div>
-                        <div className='w-25 text-center border p-2'>
-                            <h5 className='m-0 font15 fw-bold'>3</h5>
-                            <p className='m-0 text-secondary'>Companies</p>
-                        </div>
-                        <div className='w-25 text-center border p-2'>
-                            <h5 className='m-0 font15 fw-bold'>83.92%</h5>
-                            <p className='m-0 text-secondary'>Trade Success Rate</p>
-                        </div>
-                    </div>
-                    <ReactFC style={{ backgroundColor: 'white' }} {...nftGraphConfigs} />
+                <div class="container-fluid py-4" style={{ width: '45%' }}>
+                    <img className='w-100' src={devils_logo_img} />
+                    {/* <img className='w-100' src={devils_logo_svg} /> */}
                 </div>
             </div>
 
+            <div className='d-flex justify-content-around align-items-center'>
+                <div className='text-center'>
+                    <h2 className='m-0' style={{ fontSize: '30px', fontWeight: '700' }}>15000+</h2>
+                    <p>Funds & Syndicates</p>
+                </div>
 
+                <div className='text-center'>
+                    <h2 className='m-0' style={{ fontSize: '30px', fontWeight: '700' }}>$10B</h2>
+                    <p>Assets Supported</p>
+                </div>
 
-            {/* Footer */}
+                <div className='text-center'>
+                    <h2 className='m-0' style={{ fontSize: '30px', fontWeight: '700' }}>190</h2>
+                    <p>Unicorns</p>
+                </div>
+
+                <div className='text-center'>
+                    <h2 className='m-0' style={{ fontSize: '30px', fontWeight: '700' }}>57%</h2>
+                    <p>of all top-tier U.S. VC </p>
+                </div>
+            </div>
+
+            <div class="ps-5 mb-4 mx-5 background-light-purple rounded-3 d-flex justify-content-between" style={{ backgroundColor: 'rgb(6,12,38)', height: '600px', marginTop: '100px', marginBottom: '100px' }}>
+                <div className='p-4 my-auto' style={{ width: '45%' }}>
+                    <h3 className='fw-bold mb-4' style={{ color: '#dbc0f8' }}>Featured Funds</h3>
+                    <h3 className='display-5 fw-bold text-white mb-4'>Invest in Rolling Funds</h3>
+                    <h5 className='text-light mb-5'>Invest in experienced VCs backing startups, subscribe quarterly, and adjust your investment as your goals evolve.</h5>
+                    <Button style={{ textTransform: 'capitalize', backgroundColor: '#7956bf' }} variant='contained' color='primary' size='large'>DevilsList Market Place</Button>
+                </div>
+                <div style={{ width: '50%' }}>
+                    <img style={{ marginTop: '-50px', width:'550px' }} src={angellist_abstract} />
+                </div>
+            </div>
 
             <div className='px-5 mt-5 bg-black shadow'>
                 <div className='d-flex justify-content-between'>
