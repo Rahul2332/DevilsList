@@ -14,6 +14,13 @@ import stock1 from '../images/stocks/stock1.png'
 import stock2 from '../images/stocks/stock2.png'
 import stock3 from '../images/stocks/stock3.png'
 
+import sample1 from '../images/logo/sample-1.jpg'
+import sample2 from '../images/logo/sample-2.jpg'
+import dragon_glass from '../images/logo/dragon_glass.png'
+
+import buy1 from '../images/Marketplace/ProfilePic.png'
+import buy2 from '../images/Marketplace/stockPrice.png'
+
 import chart1 from '../images/charts/chart1.png'
 import chart2 from '../images/charts/chart2.png'
 import chart3 from '../images/charts/chart3.png'
@@ -315,14 +322,14 @@ export const BuySellShares = () => {
                 </div>
             </nav>
 
-            <div className='px-3 d-flex'>
-                <div className='p-3' style={{ width: '70%' }}>
+            <div className='d-flex'>
+                <div className='p-4 mx-auto shadow' style={{ width: '80%' }}>
                     <div className='pb-4 ms-5'>
+                        <h5 className='mb-0'>Wallet Balance</h5>
                         <div className='d-flex align-items-start'>
-                            <h3 className='me-2 mb-0 pb-0 display-4'>13 403.50</h3>
-                            <h4 className='mt-2 mb-0 pb-0 text-secondary'>USD</h4>
+                            <h3 className='me-2 mb-0 pb-0 display-4'>29850.25851</h3>
+                            <h4 className='mt-2 mb-0 pb-0 text-secondary'>XTZ</h4>
                         </div>
-                        <h6 className='color-green-spent'>+ 1009.28 (7.53%)</h6>
                     </div>
 
                     <AppBar position="static" color="default">
@@ -331,19 +338,12 @@ export const BuySellShares = () => {
                             onChange={handleChange}
                             indicatorColor="primary"
                             textColor="primary"
-                            // variant="fullWidth"
-                            variant="scrollable"
-                            scrollButtons="auto"
+                            variant="fullWidth"
                             centered
                             aria-label="full width tabs example"
                         >
-                            <Tab label="Summary" {...a11yProps(0)} />
-                            <Tab label="Chart" {...a11yProps(1)} />
-                            <Tab label="Statistics" {...a11yProps(2)} />
-                            <Tab label="Profile" {...a11yProps(3)} />
-                            <Tab label="Financial" {...a11yProps(4)} />
-                            <Tab label="Analysis" {...a11yProps(5)} />
-                            <Tab label="Settings" {...a11yProps(6)} />
+                            <Tab label="Buy" {...a11yProps(0)} />
+                            <Tab label="Sell" {...a11yProps(1)} />
                         </Tabs>
                     </AppBar>
                     <SwipeableViews
@@ -353,35 +353,80 @@ export const BuySellShares = () => {
                     >
                         <TabPanel value={value} index={0} dir={theme.direction}>
                             <div className='p-3'>
-                                <div className='mb-3 d-flex align-items-center '>
-                                    <span className='me-3'><ZoomOutMapIcon className='me-1' />Fullscreen</span>
-                                    <span><AddCircleOutlineIcon className='me-1' />Comparison</span>
+                                <div className='d-flex justify-content-between align-items-center'>
+                                    <div style={{ width: '60%' }}>
+                                        <img src={buy1} className='w-100' />
+                                    </div>
+                                    <div style={{ width: '40%' }}>
+                                        <div className='p-3 bg-white shadow'>
+                                            <h5 className='fw-bold pb-2'>Market Order</h5>
+                                            <div className='my-3 d-flex justify-content-between align-items-center'>
+                                                <span className='text-secondary'>Tokens</span>
+                                                <input style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                            </div>
+
+                                            <div className='my-3 d-flex justify-content-between align-items-center'>
+                                                <span className='text-secondary'>Market Price</span>
+                                                <input style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                            </div>
+
+                                            <Divider />
+
+                                            <div className='my-3 d-flex justify-content-between align-items-center'>
+                                                <span className='text-secondary'>Commissions</span>
+                                                <span className='fw-bold'>0.00 XTZ</span>
+                                            </div>
+
+                                            <Button style={{ backgroundColor: 'rgb(79,57,246)' }} className='d-block w-100' variant='contained' color='primary'>Buy Tokens</Button>
+
+                                            <div className='my-3 text-center'>
+                                                <span className='text-secondary'>Trade Options</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <ReactFC style={{ backgroundColor: 'white' }} {...stockConfigs} />
                             </div>
                         </TabPanel>
                         <TabPanel value={value} index={1} dir={theme.direction}>
-                            Item Two
-                        </TabPanel>
-                        <TabPanel value={value} index={2} dir={theme.direction}>
-                            Item Three
-                        </TabPanel>
-                        <TabPanel value={value} index={3} dir={theme.direction}>
-                            Item Three
-                        </TabPanel>
-                        <TabPanel value={value} index={4} dir={theme.direction}>
-                            Item Three
-                        </TabPanel>
-                        <TabPanel value={value} index={5} dir={theme.direction}>
-                            Item Three
-                        </TabPanel>
-                        <TabPanel value={value} index={6} dir={theme.direction}>
-                            Item Three
+                            <div className='p-3'>
+                                <div className='d-flex justify-content-between align-items-center'>
+                                    <div style={{ width: '60%' }}>
+                                        <img src={buy2} className='w-100' />
+                                    </div>
+                                    <div style={{ width: '40%' }}>
+                                        <div className='p-3 bg-white shadow'>
+                                            <h5 className='fw-bold pb-2'>Market Order</h5>
+                                            <div className='my-3 d-flex justify-content-between align-items-center'>
+                                                <span className='text-secondary'>Tokens</span>
+                                                <input style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                            </div>
+
+                                            <div className='my-3 d-flex justify-content-between align-items-center'>
+                                                <span className='text-secondary'>Market Price</span>
+                                                <input style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                            </div>
+
+                                            <Divider />
+
+                                            <div className='my-3 d-flex justify-content-between align-items-center'>
+                                                <span className='text-secondary'>Commissions</span>
+                                                <span className='fw-bold'>0.00 XTZ</span>
+                                            </div>
+
+                                            <Button style={{ backgroundColor: 'rgb(79,57,246)' }} className='d-block w-100' variant='contained' color='primary'>Sell Tokens</Button>
+
+                                            <div className='my-3 text-center'>
+                                                <span className='text-secondary'>Trade Options</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </TabPanel>
                     </SwipeableViews>
                 </div>
 
-                <div className='p-3 my-auto' style={{ width: '30%' }}>
+                {/* <div className='p-3 my-auto' style={{ width: '30%' }}>
                     <div className='p-3 mb-4 bg-white shadow'>
                         <div className='my-2 d-flex justify-content-between align-items-center'>
                             <span className='text-secondary'>Open</span>
@@ -404,38 +449,44 @@ export const BuySellShares = () => {
                             <span className='fw-bold'>7.53%</span>
                         </div>
                     </div>
-                    <div className='p-3 bg-white shadow'>
-                        <h5 className='fw-bold pb-2'>Market Order</h5>
-                        <div className='my-3 d-flex justify-content-between align-items-center'>
-                            <span className='text-secondary'>Shares</span>
-                            <input style={{width:'35%'}} type="number" className="form-control" id="exampleFormControlInput1" placeholder="0" disabled />
+                    
+                </div> */}
+            </div>
+
+
+            <div className='shadow mt-5 my-4 p-4 mx-auto' style={{width:'80%'}}>
+                    <div className='d-flex justify-content-between align-items-center'>
+                        <h5 className='fw-bold mb-0'>Top Firms</h5>
+                        <MoreVertIcon />
+                    </div>
+                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
+
+                    <div className='d-flex justify-content-between align-items-center'>
+                        <div className='d-flex justify-content-between align-items-center'>
+                            <Avatar className='me-4' src={dragon_glass} />
+                            <div>
+                                <p className='mb-0 fw-bold'>Dragon Glass</p>
+                                <p className='mb-0 font13 text-secondary'>2,500 Tokens</p>
+                            </div>
                         </div>
+                        <img style={{ height: '40px' }} src={chart1} />
+                        <div className='d-flex justify-content-around text-align-center'>
+                            <div className='text-center'>
+                                <p className='mb-0 fw-bold'>4 . 00 ꜩ</p>
+                                <p className='mb-0 font13 text-secondary'>Price per Token</p>
+                            </div>
 
-                        <div className='my-3 d-flex justify-content-between align-items-center'>
-                            <span className='text-secondary'>Market Price</span>
-                            <span className='fw-bold'>13 403.50 USD</span>
-                        </div>
-
-                        <div className='my-3 d-flex justify-content-between align-items-center'>
-                            <span className='text-secondary'>Commissions</span>
-                            <span className='fw-bold'>0.00 USD</span>
-                        </div>
-
-                        <Divider />
-
-                        <div className='my-3 d-flex justify-content-between align-items-center'>
-                            <span className='text-secondary'>Estimated const</span>
-                            <span className='fw-bold'>0.00 USD</span>
-                        </div>
-
-                        <Button style={{backgroundColor:'rgb(79,57,246)'}} className='d-block w-100' variant='contained' color='primary'>Buy Shares</Button>
-
-                        <div className='my-3 text-center'>
-                            <span className='text-secondary'>Trade Options</span>
+                            <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded px-2 ms-3' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
+                                <span className='fw-bold font13' style={{}}>0 . 00%</span>
+                            </div>
                         </div>
                     </div>
+
+                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
+
+
+
                 </div>
-            </div>
 
 
 
