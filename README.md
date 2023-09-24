@@ -70,7 +70,11 @@ The goal of Rent.AI is to create an open-source, permissionless, and transparent
 
 ### Introduction
 
-One super app to invest, raise funds, maintain cap-table, manage cash-flow and payroll & accounting with AI analytics and recommendation done on-chain 
+In a dynamic landscape where Web3, blockchain, AI, and decentralized finance (DeFi) are reshaping the future of technology and finance, we proudly present DevilList—an innovative and forward-thinking web application. DevilList emerges as a groundbreaking solution designed to address the evolving needs of investors, startups, and entrepreneurs in this rapidly changing environment.
+
+Our vision for DevilList is rooted in the recognition that the intersection of blockchain technology, artificial intelligence, and decentralized ecosystems is fundamentally altering the way businesses and investors interact. We believe that the integration of these technologies is paramount for the continued growth and success of businesses in the Web3 era.
+
+As blockchain token transactions and AI-driven solutions take center stage in financial and technological advancements, DevilList aims to be at the forefront of this revolution
 
 ### Features
 <!-- <img src='/src/images/demo_images/ppt2.png'> -->
