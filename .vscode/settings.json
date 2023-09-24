@@ -4,5 +4,6 @@
     },
     "editor.maxTokenizationLineLength": 25000,
     "html.format.wrapLineLength": 20000,
-    "editor.minimap.maxColumn": 12000
+    "editor.minimap.maxColumn": 12000,
+    "workbench.colorTheme": "Jupyter Theme Dark"
 }
