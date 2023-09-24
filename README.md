@@ -23,11 +23,11 @@
   <h1 align="center"> DevilsList </h1>
 
   <p align="center">
-    An On-Chain AngelList !
+    An On-Chain AngelList on Tezos BlockChain!
     <br />
-    <a href="https://docs.google.com/presentation/d/1bjLGVsfaebmOhMgbCX7O-pmUoJv1ZaAB5pmj_FkttRc/edit?usp=sharing"><strong>Explore Docs »</strong></a>
+    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
-    <a href="https://youtu.be/L814VAG9_dc">View Demo</a>
+    <a href="https://youtu.be/m3xArqbYJ1A">View Demo</a>
     .
     <a href="https://decentralizedangellist.web.app">View Site</a>
     <!-- <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
@@ -36,7 +36,7 @@
   </p>
 </div>
 
-
+<img src='assets/devilslist-pic.jpg'>
 
 <!-- TABLE OF CONTENTS -->
 
@@ -60,47 +60,36 @@
 
 ### Inspiration 
 
-In today's tech landscape, the future belongs to blockchain and AI. AI is rapidly becoming an essential part of all industries. However, there's a gap when it comes to accessing AI models. Existing platforms either force users to buy expensive models or provide complex files that require technical expertise to use. Small businesses, in particular, struggle with this. They can't afford pricey models, and integrating them is a challenge.
+With the world rapidly accepting and appreciating blockchain and decentralised ecosystems, it is imperative that major sites such as AngelList migrate to WEB3. New firms will be built on WEB3, and blockchain token transactions will be a major element of monetary transactions in the near future.
+Moreover Payments, loans, and borrowing were formerly only available through established financial institutions including banks. However, things changed with the arrival of blockchain technology. When the notion of cryptocurrencies began to grow in popularity, the conversation switched to a new set of issues, namely, decentralised finance (DeFi) Decentralized finance fosters an equitable and transparent financial system in which anybody may participate. It uses blockchain technology to provide unbanked individuals with access to financial and banking services.
 
-Moreover, even if businesses buy a model, it may not be a wise investment. The AI landscape is evolving rapidly, with new and better-performing models emerging constantly.
-
-That's why we're introducing Rent.AI. It's a game-changer. Our platform allows anyone to rent AI models as needed, removing the complexity of setup and the burden of high costs. Creators can showcase their models, while users can rent and utilize them effortlessly. We handle all the infrastructure, so you just input your data and get results. With the world embracing blockchain and decentralized systems, Rent.AI is at the forefront, unlocking the full potential of AI for everyone
-
-The goal of Rent.AI is to create an open-source, permissionless, and transparent financial services ecosystem. As a result, having a platform like Rent.AI is essential today.
+The goal of DeFi is to create an open-source, permissionless, and transparent financial services ecosystem. As a result, having a platform like AngelList is essential today.
 
 ### Introduction
 
-One super app to invest, raise funds, maintain cap-table, manage cash-flow and payroll & accounting with AI analytics and recommendation done on-chain 
+DevilsList is an end-to-end platform where investors may invest in businesses using tez/USDT and sign SAFT/SAFEs directly on the site. When a round closes, this website keeps track of the cap-table, and entrepreneurs may pay their workers and vendors in tez/USDT. It is a fantastic programme for investing, raising funds, maintaining a cap-table, managing cash-flow, and doing payroll and accounting on-chain.
 
 ### Features
-<img src='/src/images/demo_images/ppt2.png'>
+<img src='assets/workflow-devilslist.png'>
+DevilsLsit is a fully-decentralised app where investors can finance a variety of new firms through SAFE notes, SAFTs or direct ownership.
+The flowchart above demonstrates how our website's fund-raising event works.
 
-#### Connecting Businesses to Investors and Employees
-Devils List is the essential link connecting investors and companies. It enables direct funding, manages Cap-Tables for accurate tracking, and offers seamless Tez/USDT payroll solutions for entrepreneurs. This platform empowers financial collaboration and growth in the Web3 era
-
-#### Digital Contracts (SAFE’s, SAFT’s, Direct Equity)
-Devils List offers legitimate and user-friendly online digital contracts. These contracts are backed by PDF copies and NFTs, ensuring authenticity and scalability for any changes in Terms and Conditions
-
-#### Peer to Peer Decentralized Chat
-Most platforms offer only a global or general chating service on decentralized applications but on Devilslist decentralized peer-to-peer communication is possible. This one on one chatting service provides a more personalized experience to the investors and the companies to negotiate in investements
-
+### Exclusive Features
 #### DevilsList Marketplace
 
-<img src='/src/images/demo_images/ppt1.png'>
+Our goal was to develop a single, all-encompassing blockchain application that would allow users to invest, raise money, monitor cash flow, and more. DevilsList is a one-stop shop for all of your requirements, as my friends have very clearly explained. But as we worked to establish this product, we came to the realisation that, despite our best efforts to link investors and entrepreneurs, it is inevitable that startups will have to give up some equity in order to receive funding. What if we could devise a different means of obtaining funding for such startups? Thus, we developed the concept for DevilList Marketplace.
 
-We created DevilsList as a one-stop blockchain app for investment, fundraising, and cash flow monitoring. Recognizing the need for startups to secure funding, we introduced DevilList Marketplace.
+<img src='assets/market-place-working.png'>
 
-Each registered company receives FA2 Fungible Company Tokens, exclusive to DevilsList, serving as shares. These tokens are tradable on the marketplace, with sellers earning 5% of trade profits. Early ownership incentivizes funding, and subsequent buyers ensure a steady funding stream while trading these tokens like regular shares, with 5% going to the company.
+Every company that registers on DevilList will receive a set of FA2 Fungible Company Tokens. These tokens are comparable to shares, however they are exclusively available on DevilList . The number of company tokens each founder and member wants to possess as a member must be entered whenever the firm registers itself and they are added as we have seen previously. The entire number of tokens that the company owns is determined when all members have been added, and the initial token price is set to the company's total valuation divided by the total token. These tokens can now be traded on the DevilList Market Place like shares. Anyone who wants to buy this token can log in to DevilMarket Place and submit a buy request. 
+ 
+Unlike with regular shares, the seller of this token will continue to receive 5% of any trade profits made by subsequent buyers of this token. Therefore, after 20 successful trades involving these tokens, they will no longer exist. As is obvious, the sooner you become the token's owner, the more and longer you can earn. 
+As a result, the majority of people will purchase these tokens from firm members as quickly as possible, helping to finance the startup in its  early stages. 
+Also the subsequent buyers, analyse company's valuation and trade this token similar to regular trading with 5% Royalty going to company. This will assist in ensuring a steady flow of funding for the business.
 
-#### AI Recommendations and Business Analytics
-<img src='/src/images/stats.png'>
+#### Decentralized Peer-to-Peer Chat Application
 
-DevilsList leverages the power of AI to fortify its foundation. AI conducts precise matchmaking between startups and investors based on preferences and historical data, ensuring strategic connections. It optimizes investor portfolios with diverse startup suggestions for risk management and offers real-time market insights, fostering informed decision-making. Additionally, AI provides personalized startup job recommendations, aligning opportunities with user skills and goals, making DevilsList a comprehensive and data-driven platform
-
-
-
-
-
+Most platforms offer only a global or general chating service on decentralized applications but on Devilslist decentralized peer-to-peer communication is possible. This one on one chatting service provides a more personalized experience to the investors and the companies to negotiate in investements.
 
 
 
@@ -121,46 +110,52 @@ Of course, no one template will serve all projects since your needs may be diffe
 
 
 ### Tech-Stack
-* [Tezos](https://tezos.com/)
-* [IPFS](https://infura.io/)
-* [Smartpy](https://smartpy.io/)
-* [React](https://reactjs.org/)
+<p align="center">
+<a href="https://tezos.com/"><img src="assets/tezos-bg.png"   width="40%" height="40%"></a>
+<p align="center" float="left">
+<a href="https://smartpy.io/"><img src="assets/smartpy.png" width="30%" height="30%"></a>
+<a href="https://reactjs.org/"><img src="assets/reactjs.png"  width="30%" height="30%"></a>
+</p>
+<p align="center" float="left">
+<a href="https://ipfs.io/"><img src="assets/ipfs.png" width="30%" height="30%"></a>
+</p>
+    
+💲  Tezos - Evolutionary, revolutionary, and everything in-between. <br/>
+📷 IPFS is a peer-to-peer hypermedia protocol designed to preserve and grow humanity's knowledge. <br/>
+
 
 <p align="right"><a href="#readme-top">Top</a></p>
 
 ## Challenges Faced
-Complex ML Model Training: Developing robust machine learning models for analytics required extensive research and time, with challenging data acquisition and testing.
+We are new to the Tezos Block chain are so we ran into soem issues while the duration of this project,
+1. It took major time to resolve erros in smartpy due to lack of proper error messages and documentation regarding the errors.
+2. The Becon Wallet was not compatible with the latest React JS version (18) due to which we had to use version 16.
+3. The resources for the working of Angellist were scarce.
 
-Decentralization Challenge: Achieving complete decentralization involved exhaustive research, especially in combining IPFS and blockchain for secure, transparent storage.
-
-Document Signing Research: Implementing secure digital document signing required in-depth exploration of procedures and terms, ensuring user trust and legal compliance.
-
-Integration Complexity: Seamlessly connecting intricate machine learning models into our application's backend was a formidable task, demanding meticulous planning and execution.
-
-Scarce Resource: Securing essential resources for our tech stack was a significant challenge, leading to extended issue resolution and project functionality timelines.
+### Major issues
+2 days prior to the deadline, the infura ipfs service stopped working due to which we had to switch to a different service
+(nft.storage). This caused a major backlash due to which we had to restructure the project accordingly. If not for this
+inconvenience we would have implemented more features we had initially decided.
 
 <p align="right"><a href="#readme-top">Top</a></p>
 
 ## Future Aspects and Scope
-Bitget Exchange Integration: 
-Expand your crypto exchange's reach by integrating with Bitget, providing users with access to a wider range of trading options and further enhancing liquidity and trading opportunities.
+Royalty On FA2 Company Tokens: 
+Unlike traditional stock-trading using FA2 token the seller of token will get Royalty of 5% on the trade profit done buy the successive buyers of this tokens.
+By this we will encourage people to built great companies on blockchain as the early you become owner of the tokens longer you get the profit (each owner will keep getting royalty until the those tokens are in the market). The above feature is already half implemented.
 
-Automation using CRON jobs: 
-Streamline administrative tasks, improve efficiency, and ensure timely execution of critical functions, optimizing overall platform performance.
+CRON jobs : Introducing CRON jobs to automate the buying and selling FA2 company tokens (which are currently being triggered by confirmations) instead directly initiate tokens transfer whenever avaliable at the buyer's price.
 
-Incorporate both direct and indirect taxes on financial transfers: 
-Ensure regulatory compliance and transparency while offering users a comprehensive financial experience.
+Coinbase: If any user on the platform is deficiet of Tez instead of going to other platforms for buying tez he can buy tez directly from our platform. By making this buying process easy we will encourage the users to keep trading in Tez which will help in growth of Tezos Ecosystem. The above feature is almost close to completition.
 
-Using Digital Signatures in legal agreements: 
-Enhance security and trustworthiness of contracts, attracting more users and businesses to conduct transactions on your platform.
+USDT/USDC: According to the research USDT stable coin has came on the Tezos blockchain recently in June 2022. USDC.e is coin on ethereum blockchain. For allowing the transactions in USDC.e there need to build an bridge between the two blockchain. We hope to enable transactions in this two coins in the near future.
 
-AI for Market Analysis and Prediction: 
-Empower users with valuable market insights, enabling more informed investment decisions and increasing user confidence.
 
-Real-Time High-Frequency Token Trading: 
-Attract professional traders and liquidity, making your platform a go-to destination for fast and efficient cryptocurrency trading
 
 <p align="right"><a href="#readme-top">Top</a></p>
+
+
+
 
 
 ## Guide to setup the project locally
@@ -197,7 +192,7 @@ Attract professional traders and liquidity, making your platform a go-to destina
 <p align="right"><a href="#readme-top">Top</a></p>
 
 ## Contract Address
-### KT1RgCskZanXW1mtz4aeFB9txG5Uce454V3q
+### KT1Hm63JnL6ZCypjWgH4Xnr9tETpkbz48q5H
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments and References
@@ -215,6 +210,6 @@ Attract professional traders and liquidity, making your platform a go-to destina
 <p align="right"><a href="#readme-top">Top</a></p>
 
 ## Project Demo Pictures
-You can refer the sample shots our projects <a href="https://drive.google.com/drive/folders/1HcQrkdnlIA9o4tYNpDbzngM5WnvX5ajB?usp=sharing">Click Here</a>
+You can refer the sample shots our projects <a href="https://drive.google.com/drive/folders/1vyppSZRm_aS8BcY_G4efxLQuYp651AkP?usp=sharing">Click Here</a>
 
 <p align="right">(<a href="#readme-top">Top</a>)</p>

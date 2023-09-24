@@ -1,45 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
-import { getRootStorage } from '../utils/Api';
-import { getActiveAccount, connectWallet } from '../utils/wallet';
+import { getActiveAccount, disconnectWallet} from '../utils/wallet';
+import { getBalance, getBigMapKeys, getKeyBigMapByID, getRootStorage } from '../utils/Api';
+import axios from 'axios';
 
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import Badge from '@material-ui/core/Badge';
-import IconButton from '@material-ui/core/IconButton';
-import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
-import SearchIcon from '@material-ui/icons/Search';
 import Divider from '@material-ui/core/Divider';
 
-import stock1 from '../images/stocks/stock1.png'
-import stock2 from '../images/stocks/stock2.png'
-import stock3 from '../images/stocks/stock3.png'
 
-import sample1 from '../images/logo/sample-1.jpg'
-import sample2 from '../images/logo/sample-2.jpg'
 import dragon_glass from '../images/logo/dragon_glass.png'
 
 import buy1 from '../images/Marketplace/ProfilePic.png'
 import buy2 from '../images/Marketplace/stockPrice.png'
 
 import chart1 from '../images/charts/chart1.png'
-import chart2 from '../images/charts/chart2.png'
-import chart3 from '../images/charts/chart3.png'
-import chart4 from '../images/charts/chart4.png'
-import chart5 from '../images/charts/chart5.png'
 
-import img1 from '../images/home/end_minus_5.png';
-import img2 from '../images/home/end_minus_4.png';
-import img3 from '../images/home/end_minus_3.png';
-import img4 from '../images/home/end_minus_2.png';
-import img5 from '../images/home/end_minus_1.png';
-import img6 from '../images/home/end.png';
-import img7 from '../images/home/end_plus_1.png';
-import angellist_abstract from '../images/stocks/angellist_abstract.png'
-import marketplace from '../images/marketplace.png'
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import Avatar from '@material-ui/core/Avatar';
-import appleLogo from '../images/apple-logo.png'
 
 import TwitterIcon from '@material-ui/icons/Twitter';
 import InstagramIcon from '@material-ui/icons/Instagram';
@@ -47,12 +23,6 @@ import YouTubeIcon from '@material-ui/icons/YouTube';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import RedditIcon from '@material-ui/icons/Reddit';
-import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined'
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
-import AccountBalanceWalletOutlinedIcon from '@material-ui/icons/AccountBalanceWalletOutlined';
-import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
@@ -63,9 +33,6 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
-import angellist_logo from '../images/home/angellist_logo.png'
-import devils_logo_img from '../images/logo/devils_logo_800px_trans.png'
-import devils_logo_svg from '../images/logo/devils_logo.svg'
 import small_devils_logo from '../images/logo/small_devils_logo.png'
 import { Button } from '@material-ui/core';
 
@@ -81,7 +48,9 @@ import ZoomLine from "fusioncharts/fusioncharts.zoomline"
 
 // Step 5 - Include the theme as fusion
 import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
-import { payVndr } from '../utils/operation';
+import { buyTokensInMarketplace, payVndr, sellTokensInMarketplace } from '../utils/operation';
+import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Step 6 - Adding the chart and theme as dependency to the core fusioncharts
 ReactFC.fcRoot(FusionCharts, ZoomLine, Column2D, FusionTheme);
@@ -286,6 +255,41 @@ const useStyles = makeStyles((theme) => ({
 
 export const BuySellShares = () => {
     const theme = useTheme();
+    const [balance, setbalance] = useState();
+    const [tokenList, settokenList] = useState();
+    const [companyOptionsList, setcompanyOptionsList] = useState();
+
+    const navigate = useNavigate();
+
+    const sellTokens = useRef();
+    const sellPrice = useRef();
+    const buyTokens = useRef();
+    const buyPrice = useRef();
+    const chosenCompany = useRef();
+
+    const companyBigMapID = 88413;
+    const ledgerBigMapID = 88418;
+
+    const [wallet, setWallet] = useState(null);
+    useEffect(() => {
+        if (!wallet) {
+            (async () => {
+                const activeAccount = await getActiveAccount();
+                setWallet(activeAccount);
+                makeCompanyOptionsList();
+            })();
+        }
+    }, []);
+
+    useEffect(() => {
+        const retrieveBalance = async () => {
+            const bal = await getBalance(wallet.address);
+            setbalance(bal)
+        }
+        if (wallet && !balance) {
+            retrieveBalance();
+        }
+    }, [wallet])
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -296,12 +300,145 @@ export const BuySellShares = () => {
         setValue(index);
     };
 
-    async function showAlertBuy(){
-        if(window.confirm("Seller found, Name of Seller: Anurag")){
-            await payVndr(1000, "tz1Yik5c1vGKgB3yyytZqrjxb1hbuSF2X8MZ", "tz1baoq2Ys4aqUGDJWYtWVpTxfUup9PdEpoP", "buying");
+    async function getOwnedTokens() {
+        const tokenDetails = await getBigMapKeys(ledgerBigMapID);
+        const storage = await getRootStorage();
+        console.log(tokenDetails);
+
+        const temp = [];
+        for (let token of tokenDetails) {
+            if (token.key.address === wallet.address) {
+                const tokensOwned = token.value;
+
+                let companyAddress = storage["all_companies"][token.key.nat];
+
+                const companyDetails = await getKeyBigMapByID(companyBigMapID, companyAddress);
+                const totalShares = companyDetails.value["total_shares"];
+                const companyValuation = companyDetails.value["company_valuation"];
+                const companyProfileHash = companyDetails.value["company_profile_Id"];
+
+                const companyJSON = await axios("https://" + companyProfileHash + ".ipfs.dweb.link/metadata.json")
+                const companyName = companyJSON.data.name;
+                const companyUri = companyJSON.data.image;
+                const companyPhotoHash = companyUri.substring(7, companyUri.length - 5);
+                temp.push(
+                    <>
+                        <div className='d-flex justify-content-between align-items-center'>
+                            <div className='d-flex justify-content-between align-items-center'>
+                                <Avatar className='me-4' src={"https://" + companyPhotoHash + ".ipfs.dweb.link/blob"} />
+                                <div>
+                                    <p className='mb-0 fw-bold'>{companyName}</p>
+                                    <p className='mb-0 font13 text-secondary'>{tokensOwned} Tokens</p>
+                                </div>
+                            </div>
+                            <img style={{ height: '40px' }} src={chart1} />
+                            <div className='d-flex justify-content-around text-align-center'>
+                                <div className='text-center'>
+                                    <p className='mb-0 fw-bold'>{companyValuation / totalShares} ꜩ</p>
+                                    <p className='mb-0 font13 text-secondary'>Price per Token</p>
+                                </div>
+
+                                <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded px-2 ms-3' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
+                                    <span className='fw-bold font13' style={{}}>0 . 00%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Divider className='my-3' style={{ backgroundColor: 'grey' }} /></>
+                )
+            }
         }
-        alert("Token Transfer Successful");
+        settokenList(temp);
     }
+    if (!tokenList && wallet) {
+        getOwnedTokens();
+    }
+
+    async function handleSellTokens(e) {
+        e.preventDefault();
+        try{
+            await sellTokensInMarketplace(chosenCompany.current.value, sellPrice.current.value, wallet.address, sellTokens.current.value);
+            alert("Token sold successfully");
+        }
+        catch{
+            console.error("Token selling failed");
+        }
+
+    }
+    // company_token0
+    // price_per_share1
+    // seller_wallettz1WCzntScYKkYm6zPozjC53Rz4krRbS8WEY
+    // shares10
+    async function handleBuyTokens(e){
+        e.preventDefault();
+        const storage = await getRootStorage();
+        console.log(storage);
+        const sellersList = storage["sell_shares_request"]
+        let sellerAddress = null;
+
+        for(let seller of sellersList){
+            const sellingPrice = seller.price_per_share;
+            const companyToken = seller.company_token;
+            const sellerWallet = seller.seller_wallet;
+            const sellingTokens = seller.shares;
+
+            if(
+                companyToken != chosenCompany.current.value &&
+                sellingPrice != buyPrice.current.value &&
+                sellingTokens != buyTokens.current.value
+            )
+            {
+                alert("No tokens are currently available");
+                return;
+            }
+            else{
+                if(window.confirm("Do You Want to Continue Buying Tokens?")){
+                    sellerAddress = sellerWallet;
+                }
+                else{
+                    return;
+                }
+            }
+
+        }
+
+        try{
+            await buyTokensInMarketplace(buyTokens.current.value, sellerAddress, wallet.address, chosenCompany.current.value, buyTokens.current.value*buyPrice.current.value)
+            alert("Token sold successfully");
+            window.location.reload();
+        }
+        catch{
+            console.error("Token selling failed");
+        }
+    }
+
+    async function makeCompanyOptionsList(){
+        const temp = [];
+
+        const storage = await getRootStorage();
+
+        let i=0;
+        for (let companyAddress of storage["all_companies"]) {
+            const companyDetails = await getKeyBigMapByID(companyBigMapID, companyAddress);
+            const companyProfileHash = companyDetails.value["company_profile_Id"];
+            const companyJSON = await axios("https://" + companyProfileHash + ".ipfs.dweb.link/metadata.json")
+            const companyName = companyJSON.data.name;
+
+            temp.push(<option value={i} selected>{companyName}</option>);
+            i++;
+        }
+        setcompanyOptionsList(temp);
+    }
+
+    const onDisConnectWallet = async () => {
+        console.log("Disconnecting");
+        await disconnectWallet();
+        const activeAccount = await getActiveAccount();
+        setWallet(activeAccount);
+        console.log("Disconnected");
+        navigate("/marketplace");
+      };
+
     return (
         <>
             <nav className='d-flex justify-content-between align-items-center shadow rounded15 px-3' style={{ height: '70px', marginBottom: '30px' }}>
@@ -319,23 +456,19 @@ export const BuySellShares = () => {
                 </div>
 
                 <div className='d-flex justify-content-between align-items-center'>
-                    {/* <Button className='mx-2' variant="outlined" color="primary" onClick={handleLogin}>
-                        Log in
+                    <Button onClick={onDisConnectWallet} className='mx-2' variant="outlined" color="primary">
+                        Log out
                     </Button>
-                    <Link to='/sign-up'>
-                        <Button className='mx-2' variant="contained" color="primary">
-                            Join
-                        </Button>
-                    </Link> */}
                 </div>
             </nav>
 
             <div className='d-flex'>
                 <div className='p-4 mx-auto shadow' style={{ width: '80%' }}>
                     <div className='pb-4 ms-5'>
-                        <h3 className='mb-0'>Welcome Rakshit!</h3><h5><br/>Wallet Balance</h5>
+                        <h3 className='mb-0'>Welcome,</h3><h5><br />Wallet Balance</h5>
                         <div className='d-flex align-items-start'>
-                            <h3 className='me-2 mb-0 pb-0 display-4'>28850.25</h3>
+                            {wallet ?
+                                <h3 className='me-2 mb-0 pb-0 display-4'>{(balance - (balance % 10000)) / 1000000}</h3> : null}
                             <h4 className='mt-2 mb-0 pb-0 text-secondary'>XTZ</h4>
                         </div>
                     </div>
@@ -366,16 +499,22 @@ export const BuySellShares = () => {
                                         <img src={buy1} className='w-100' />
                                     </div>
                                     <div style={{ width: '40%' }}>
-                                        <div className='p-3 bg-white shadow'>
+                                        <form onSubmit={handleBuyTokens} className='p-3 bg-white shadow'>
                                             <h5 className='fw-bold pb-2'>Market Order</h5>
+
+                                            <select ref={chosenCompany} className="form-select" aria-label="Default select example">
+                                                <option disabled selected>Select Company</option>
+                                                {companyOptionsList}
+                                            </select>
+
                                             <div className='my-3 d-flex justify-content-between align-items-center'>
                                                 <span className='text-secondary'>Tokens</span>
-                                                <input defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                                <input ref={buyTokens} defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" required />
                                             </div>
 
                                             <div className='my-3 d-flex justify-content-between align-items-center'>
-                                                <span className='text-secondary'>Market Price</span>
-                                                <input defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                                <span className='text-secondary'>Price per Token</span>
+                                                <input ref={buyPrice} defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" required />
                                             </div>
 
                                             <Divider />
@@ -384,13 +523,12 @@ export const BuySellShares = () => {
                                                 <span className='text-secondary'>Commissions</span>
                                                 <span className='fw-bold'>0.00 XTZ</span>
                                             </div>
-
-                                            <Button onClick={()=>{setTimeout(showAlertBuy, 2000)}} style={{ backgroundColor: 'rgb(79,57,246)' }} className='d-block w-100' variant='contained' color='primary'>Buy Tokens</Button>
+                                            <Button type='submit' style={{ backgroundColor: 'rgb(79,57,246)' }} className='d-block w-100' variant='contained' color='primary'>Buy Tokens</Button>
 
                                             <div className='my-3 text-center'>
                                                 <span className='text-secondary'>Trade Options</span>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -402,16 +540,20 @@ export const BuySellShares = () => {
                                         <img src={buy2} className='w-100' />
                                     </div>
                                     <div style={{ width: '40%' }}>
-                                        <div className='p-3 bg-white shadow'>
+                                        <form onSubmit={handleSellTokens} className='p-3 bg-white shadow'>
                                             <h5 className='fw-bold pb-2'>Market Order</h5>
+                                            <select ref={chosenCompany} className="form-select" aria-label="Default select example">
+                                                <option disabled selected>Select Company</option>
+                                                {companyOptionsList}
+                                            </select>
                                             <div className='my-3 d-flex justify-content-between align-items-center'>
                                                 <span className='text-secondary'>Tokens</span>
-                                                <input defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                                <input ref={sellTokens} defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
                                             </div>
 
                                             <div className='my-3 d-flex justify-content-between align-items-center'>
-                                                <span className='text-secondary'>Market Price</span>
-                                                <input defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                                                <span className='text-secondary'>Price per Token</span>
+                                                <input ref={sellPrice} defaultValue={0} style={{ width: '35%' }} type="number" className="form-control" id="exampleFormControlInput1" placeholder="" />
                                             </div>
 
                                             <Divider />
@@ -420,13 +562,11 @@ export const BuySellShares = () => {
                                                 <span className='text-secondary'>Commissions</span>
                                                 <span className='fw-bold'>0.00 XTZ</span>
                                             </div>
-
-                                            <Button onClick={()=>{setTimeout(showAlertBuy, 2000)}} style={{ backgroundColor: 'rgb(79,57,246)' }} className='d-block w-100' variant='contained' color='primary'>Sell Tokens</Button>
-
+                                            <Button type='submit' style={{ backgroundColor: 'rgb(79,57,246)' }} className='d-block w-100' variant='contained' color='primary'>Sell Tokens</Button>
                                             <div className='my-3 text-center'>
                                                 <span className='text-secondary'>Trade Options</span>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -462,41 +602,16 @@ export const BuySellShares = () => {
             </div>
 
 
-            <div className='shadow mt-5 my-4 p-4 mx-auto' style={{width:'80%'}}>
-                    <div className='d-flex justify-content-between align-items-center'>
-                        <h5 className='fw-bold mb-0'>Top Firms</h5>
-                        <MoreVertIcon />
-                    </div>
-                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
-
-                    <div className='d-flex justify-content-between align-items-center'>
-                        <div className='d-flex justify-content-between align-items-center'>
-                            <Avatar className='me-4' src={dragon_glass} />
-                            <div>
-                                <p className='mb-0 fw-bold'>Dragon Glass</p>
-                                <p className='mb-0 font13 text-secondary'>1,000 Tokens</p>
-                            </div>
-                        </div>
-                        <img style={{ height: '40px' }} src={chart1} />
-                        <div className='d-flex justify-content-around text-align-center'>
-                            <div className='text-center'>
-                                <p className='mb-0 fw-bold'>4 . 00 ꜩ</p>
-                                <p className='mb-0 font13 text-secondary'>Price per Token</p>
-                            </div>
-
-                            <div className='py-1 me-3 d-flex justify-content-center align-items-center rounded px-2 ms-3' style={{ backgroundColor: 'rgba(10,179,156,.1)', color: 'rgba(10,179,156,1)' }}>
-                                <span className='fw-bold font13' style={{}}>0 . 00%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
-
-
-
+            <div className='shadow mt-5 my-4 p-4 mx-auto' style={{ width: '80%' }}>
+                <div className='d-flex justify-content-between align-items-center'>
+                    <h5 className='fw-bold mb-0'>Top Firms</h5>
+                    <MoreVertIcon />
                 </div>
+                <Divider className='my-3' style={{ backgroundColor: 'grey' }} />
 
+                {tokenList}
 
+            </div>
 
             {/* Footer */}
 
