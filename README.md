@@ -60,21 +60,15 @@
 
 ### Inspiration 
 
-In today's tech landscape, the future belongs to blockchain and AI. AI is rapidly becoming an essential part of all industries. However, there's a gap when it comes to accessing AI models. Existing platforms either force users to buy expensive models or provide complex files that require technical expertise to use. Small businesses, in particular, struggle with this. They can't afford pricey models, and integrating them is a challenge.
-
-Moreover, even if businesses buy a model, it may not be a wise investment. The AI landscape is evolving rapidly, with new and better-performing models emerging constantly.
-
-That's why we're introducing Rent.AI. It's a game-changer. Our platform allows anyone to rent AI models as needed, removing the complexity of setup and the burden of high costs. Creators can showcase their models, while users can rent and utilize them effortlessly. We handle all the infrastructure, so you just input your data and get results. With the world embracing blockchain and decentralized systems, Rent.AI is at the forefront, unlocking the full potential of AI for everyone
-
-The goal of Rent.AI is to create an open-source, permissionless, and transparent financial services ecosystem. As a result, having a platform like Rent.AI is essential today.
-
-### Introduction
-
 In a dynamic landscape where Web3, blockchain, AI, and decentralized finance (DeFi) are reshaping the future of technology and finance, we proudly present DevilList—an innovative and forward-thinking web application. DevilList emerges as a groundbreaking solution designed to address the evolving needs of investors, startups, and entrepreneurs in this rapidly changing environment.
 
 Our vision for DevilList is rooted in the recognition that the intersection of blockchain technology, artificial intelligence, and decentralized ecosystems is fundamentally altering the way businesses and investors interact. We believe that the integration of these technologies is paramount for the continued growth and success of businesses in the Web3 era.
 
 As blockchain token transactions and AI-driven solutions take center stage in financial and technological advancements, DevilList aims to be at the forefront of this revolution
+
+### Introduction
+All-in-one solution that seamlessly integrates cutting-edge technologies such as blockchain, artificial intelligence (AI), and decentralized finance (DeFi). DevilList is poised to bridge this gap by offering a unified platform that empowers startups to secure funding, manage their financial operations, and make informed decisions through on-chain AI analytics and recommendations. DevilList aims to revolutionize the way businesses access capital, manage their financial data, and harness the potential of Web3 technologies, ultimately enabling a more transparent, efficient, and equitable financial ecosystem.
+
 
 ### Features
 <!-- <img src='/src/images/demo_images/ppt2.png'> -->
